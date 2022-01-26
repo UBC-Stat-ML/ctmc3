@@ -6,7 +6,7 @@
 
 - Ubuntu: `apt-get install libfftw3-dev`
 - macOS: `brew install fftw`
-- Other: view instructions [here](http://www.fftw.org/install/windows.html)
+- Windows: view instructions [here](http://www.fftw.org/install/windows.html)
 
 **Step 1**: install required package `pske` using the provided tarball
 
