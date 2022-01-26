@@ -1,0 +1,269 @@
+
+Analyzing truncation and approx. solver asymptotics, and tuning stopping times
+
+Studying convergence of the likelihood
+N_trunc=0, ll=-511.61, ll_Cauchy-err=188.39
+N_trunc=1, ll=-248.894, ll_Cauchy-err=262.716
+N_trunc=2, ll=-185.245, ll_Cauchy-err=63.6494
+N_trunc=3, ll=-159.698, ll_Cauchy-err=25.547
+N_trunc=4, ll=-145.887, ll_Cauchy-err=13.8106
+N_trunc=5, ll=-137.37, ll_Cauchy-err=8.51715
+N_trunc=6, ll=-132.229, ll_Cauchy-err=5.14123
+N_trunc=7, ll=-128.935, ll_Cauchy-err=3.29361
+N_trunc=8, ll=-127.225, ll_Cauchy-err=1.71002
+N_trunc=9, ll=-126.31, ll_Cauchy-err=0.914867
+N_trunc=10, ll=-124.753, ll_Cauchy-err=1.55681
+N_trunc=11, ll=-124.604, ll_Cauchy-err=0.14959
+N_trunc=12, ll=-124.506, ll_Cauchy-err=0.0980121
+N_trunc=13, ll=-124.444, ll_Cauchy-err=0.0614891
+N_trunc=14, ll=-124.407, ll_Cauchy-err=0.0368991
+N_trunc=15, ll=-124.386, ll_Cauchy-err=0.0209024
+N_trunc=16, ll=-124.375, ll_Cauchy-err=0.0111677
+N_trunc=17, ll=-124.37, ll_Cauchy-err=0.0056269
+N_trunc=18, ll=-124.367, ll_Cauchy-err=0.00273119
+N_trunc=19, ll=-124.366, ll_Cauchy-err=0.00123263
+N_trunc=20, ll=-124.365, ll_Cauchy-err=0.000588166
+N_trunc=21, ll=-124.365, ll_Cauchy-err=0.000272226
+N_trunc=22, ll=-124.365, ll_Cauchy-err=0.000121578
+N_trunc=23, ll=-124.365, ll_Cauchy-err=5.29434e-05
+N_trunc=24, ll=-124.365, ll_Cauchy-err=2.09603e-05
+N_trunc=25, ll=-124.365, ll_Cauchy-err=8.90937e-06
+N_trunc=26, ll=-124.365, ll_Cauchy-err=2.71219e-06
+N_trunc=27, ll=-124.365, ll_Cauchy-err=6.5505e-07
+N_trunc=28, ll=-124.365, ll_Cauchy-err=1.00164e-06
+N_trunc=29, ll=-124.365, ll_Cauchy-err=-2.63676e-07
+          used (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells 1641537 87.7    2605407  139.2   2605407  139.2
+Vcells 3562719 27.2  221924763 1693.2 283725062 2164.7
+(Spent 8.2 minutes on this task)
+
+Info about tuned stop-times:
+O_trunc:
+[1] 28
+O_eps:
+[1] 6.529412
+prob:
+[1] 0.9
+eps_speed:
+[1] 0.2352941
+
+Growing spaces first for smoother sampling and more faithful timings
+(Spent 1.4 minutes on this task)
+          used (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells 1647711   88    2605407  139.2   2605407  139.2
+Vcells 3669698   28  252423833 1925.9 310818835 2371.4
+
+Short run of 2511 samples to get better theta_0 and to estimate variance under posterior
+(Spent 44.6 minutes on this task)
+Estimate of mode with target=-119.851801 found at:
+ Death of predator      Birth of prey Pred+Prey -> 2Pred 
+        0.33027411         0.47503159         0.01153123 
+
+Analyzing truncation and approx. solver asymptotics at new theta_0
+
+Studying convergence of the likelihood
+N_trunc=0, ll=-567.111, ll_Cauchy-err=132.889
+N_trunc=1, ll=-260.493, ll_Cauchy-err=306.618
+N_trunc=2, ll=-188.555, ll_Cauchy-err=71.9381
+N_trunc=3, ll=-160.661, ll_Cauchy-err=27.8936
+N_trunc=4, ll=-145.834, ll_Cauchy-err=14.8277
+N_trunc=5, ll=-136.771, ll_Cauchy-err=9.06327
+N_trunc=6, ll=-131.35, ll_Cauchy-err=5.42063
+N_trunc=7, ll=-127.83, ll_Cauchy-err=3.51974
+N_trunc=8, ll=-125.95, ll_Cauchy-err=1.88057
+N_trunc=9, ll=-124.962, ll_Cauchy-err=0.987757
+N_trunc=10, ll=-123.24, ll_Cauchy-err=1.72206
+N_trunc=11, ll=-123.065, ll_Cauchy-err=0.174857
+N_trunc=12, ll=-122.947, ll_Cauchy-err=0.117878
+N_trunc=13, ll=-122.87, ll_Cauchy-err=0.0766519
+N_trunc=14, ll=-122.822, ll_Cauchy-err=0.0480774
+N_trunc=15, ll=-122.793, ll_Cauchy-err=0.0288185
+N_trunc=16, ll=-122.777, ll_Cauchy-err=0.0165021
+N_trunc=17, ll=-122.768, ll_Cauchy-err=0.00903082
+N_trunc=18, ll=-122.763, ll_Cauchy-err=0.00479851
+N_trunc=19, ll=-122.761, ll_Cauchy-err=0.00238847
+N_trunc=20, ll=-122.76, ll_Cauchy-err=0.00124309
+N_trunc=21, ll=-122.759, ll_Cauchy-err=0.000631508
+N_trunc=22, ll=-122.759, ll_Cauchy-err=0.000309676
+N_trunc=23, ll=-122.758, ll_Cauchy-err=0.000146886
+N_trunc=24, ll=-122.758, ll_Cauchy-err=6.66629e-05
+N_trunc=25, ll=-122.758, ll_Cauchy-err=2.83362e-05
+N_trunc=26, ll=-122.758, ll_Cauchy-err=1.22045e-05
+N_trunc=27, ll=-122.758, ll_Cauchy-err=4.24657e-06
+N_trunc=28, ll=-122.758, ll_Cauchy-err=2.09487e-06
+N_trunc=29, ll=-122.758, ll_Cauchy-err=9.06354e-07
+N_trunc=30, ll=-122.758, ll_Cauchy-err=-1.9102e-07
+          used (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells 1653865 88.4    2605407  139.2   2605407  139.2
+Vcells 3742029 28.6  161551254 1232.6 310818835 2371.4
+
+We'll be searching these parameters
+List of 3
+ $ sd_thresh_vec  : num [1:8] 0.00001 0.0001 0.001 0.01 0.1 1 1.5 2
+ $ varmat_mult_vec: num [1:8] 0.25 0.786 1.321 1.857 2.393 ...
+ $ min_mass_vec   : num [1:10] 0 0.01 0.1 0.2 0.4 0.6 0.8 0.9 0.99 0.999
+
+Estimating sd(loglik) for every configuration.
+(Spent 10.4 minutes on this task)
+
+Estimated sd(loglik) for each config:
+   min_mass    sd_loglik time_per_loglik
+1     0.000 4.230518e-01       0.7285428
+2     0.010 4.441045e-01       0.7304845
+3     0.100 2.873441e-01       0.7641039
+4     0.200 1.532439e-01       0.7675895
+5     0.400 1.403061e-01       0.7871876
+6     0.600 6.592024e-02       0.8292743
+7     0.800 3.223314e-02       0.9008179
+8     0.900 8.063959e-03       0.9547112
+9     0.990 6.384563e-06       1.4772747
+10    0.999 4.102743e-06       1.2731987
+
+Best configuration for every threshold on sd(loglik)
+    sd_thresh min_mass    sd_loglik time_per_loglik
+10    0.00001    0.999 4.102743e-06       1.2731987
+101   0.00010    0.999 4.102743e-06       1.2731987
+102   0.00100    0.999 4.102743e-06       1.2731987
+8     0.01000    0.900 8.063959e-03       0.9547112
+6     0.10000    0.600 6.592024e-02       0.8292743
+1     1.00000    0.000 4.230518e-01       0.7285428
+11    1.50000    0.000 4.230518e-01       0.7285428
+12    2.00000    0.000 4.230518e-01       0.7285428
+After removing thresholds with duplicated configurations, we get
+   sd_thresh min_mass    sd_loglik time_per_loglik
+10     1e-05    0.999 4.102743e-06       1.2731987
+8      1e-02    0.900 8.063959e-03       0.9547112
+6      1e-01    0.600 6.592024e-02       0.8292743
+1      1e+00    0.000 4.230518e-01       0.7285428
+
+Tuning stop times to the best config found for sd(loglik)<=1.0e-05.
+
+Info about tuned stop-times:
+O_trunc:
+[1] 29
+O_eps:
+[1] 6.6
+prob:
+[1] 0.9
+eps_speed:
+[1] 0.2
+
+Tuning variance of the proposal for sd(loglik)<=1.0e-05.
+Selected the following configuration:
+  varmat_mult acc_ratio    target mean_ess ess_per_min
+7    3.464286 0.1824495 -119.8518 125.3434    4.538152
+(Spent 58.2 minutes on this task)
+
+
+Tuning for this sd(loglik) threshold finished. Summary:
+   sd_thresh min_mass    sd_loglik time_per_loglik varmat_mult
+10     1e-05    0.999 4.102743e-06        1.273199    3.464286
+
+Running all chains using this configuration to get better variance of proposal and measurements of ess/min.
+Total sampling time: 175.7 minutes
+
+Average ESS/min: 4.30
+
+Tuning stop times to the best config found for sd(loglik)<=1.0e-02.
+
+Info about tuned stop-times:
+O_trunc:
+[1] 14
+O_eps:
+[1] 3
+prob:
+[1] 0.4672354
+eps_speed:
+[1] 0.2352941
+
+Tuning variance of the proposal for sd(loglik)<=1.0e-02.
+Selected the following configuration:
+  varmat_mult acc_ratio    target mean_ess ess_per_min
+6    2.928571 0.2234848 -119.8477  133.388     6.76047
+(Spent 40.6 minutes on this task)
+
+
+Tuning for this sd(loglik) threshold finished. Summary:
+  sd_thresh min_mass   sd_loglik time_per_loglik varmat_mult
+8      0.01      0.9 0.008063959       0.9547112    2.928571
+
+Running all chains using this configuration to get better variance of proposal and measurements of ess/min.
+Total sampling time: 129.4 minutes
+
+Average ESS/min: 5.47
+
+Tuning stop times to the best config found for sd(loglik)<=1.0e-01.
+
+Info about tuned stop-times:
+O_trunc:
+[1] 11
+O_eps:
+[1] 2.238095
+prob:
+[1] 0.4390398
+eps_speed:
+[1] 0.2380952
+
+Tuning variance of the proposal for sd(loglik)<=1.0e-01.
+Selected the following configuration:
+  varmat_mult acc_ratio    target mean_ess ess_per_min
+5    2.392857 0.2847222 -119.8638 131.7974    7.522593
+(Spent 35.4 minutes on this task)
+
+
+Tuning for this sd(loglik) threshold finished. Summary:
+  sd_thresh min_mass  sd_loglik time_per_loglik varmat_mult
+6       0.1      0.6 0.06592024       0.8292743    2.392857
+
+Running all chains using this configuration to get better variance of proposal and measurements of ess/min.
+Total sampling time: 111.3 minutes
+
+Average ESS/min: 7.26
+
+Tuning stop times to the best config found for sd(loglik)<=1.0e+00.
+
+Info about tuned stop-times:
+O_trunc:
+[1] 9
+O_eps:
+[1] 1
+prob:
+[1] 0.4
+eps_speed:
+[1] 0.2727273
+
+Tuning variance of the proposal for sd(loglik)<=1.0e+00.
+Selected the following configuration:
+  varmat_mult acc_ratio    target mean_ess ess_per_min
+4    1.857143 0.3036616 -119.1872 125.3075    7.885853
+(Spent 31.8 minutes on this task)
+
+
+Tuning for this sd(loglik) threshold finished. Summary:
+  sd_thresh min_mass sd_loglik time_per_loglik varmat_mult
+1         1        0 0.4230518       0.7285428    1.857143
+
+Running all chains using this configuration to get better variance of proposal and measurements of ess/min.
+Total sampling time: 100.2 minutes
+
+Average ESS/min: 7.32
+
+Finished! Summary of ESS/min:
+  sd_thresh min_mass    sd_loglik time_per_loglik varmat_mult
+1     1e-05    0.999 4.102743e-06       1.2731987    3.464286
+2     1e-02    0.900 8.063959e-03       0.9547112    2.928571
+3     1e-01    0.600 6.592024e-02       0.8292743    2.392857
+4     1e+00    0.000 4.230518e-01       0.7285428    1.857143
+  total_sampling_time ess_mean ess_per_min
+1            175.7171 756.2206    4.303625
+2            129.3581 707.8659    5.472144
+3            111.3090 808.5280    7.263818
+4            100.2225 733.2669    7.316389
+
+Setting sampler to the best configuration found
+  sd_thresh min_mass sd_loglik time_per_loglik varmat_mult total_sampling_time
+4         1        0 0.4230518       0.7285428    1.857143            100.2225
+  ess_mean ess_per_min
+4 733.2669    7.316389
+
+Storing results.
