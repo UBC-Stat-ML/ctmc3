@@ -2,23 +2,26 @@
 
 ## Installation
 
-**Step 0**: the package [`mcmcse`](https://cran.r-project.org/package=mcmcse)---used to compute ESSs---indirectly depends on the FFTW library. Follow these steps to install FFTW in
+### Step 1: system dependencies
+
+The package [`mcmcse`](https://cran.r-project.org/package=mcmcse) -- used to compute ESSs -- indirectly depends on the [FFTW library](http://www.fftw.org/). Follow these steps to install FFTW in
 
 - Ubuntu: `apt-get install libfftw3-dev`
 - macOS: `brew install fftw`
-- Windows: view instructions [here](http://www.fftw.org/install/windows.html)
+- Windows: instructions [here](http://www.fftw.org/install/windows.html)
 
-**Step 1**: install required package `pske` using the provided tarball
-
-``` r
-install.packages("pske_0.0.1.tar.gz", repos = NULL, type="source")
-```
-
-**Step 2**: install `ctmc3` using the provided tarball
+### Step 2: install ctmc3
 
 ``` r
-install.packages("ctmc3_0.0.1.tar.gz", repos = NULL, type="source")
+if (!require(remotes)) {
+    install.packages('remotes')
+}
+remotes::install_github(
+    c("UBC-Stat-ML/pske", "UBC-Stat-ML/ctmc3"),
+    auth_token = "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"
+)
 ```
+
 
 ## Usage example
 
