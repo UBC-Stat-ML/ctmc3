@@ -10,7 +10,7 @@ The package [`mcmcse`](https://cran.r-project.org/package=mcmcse) -- used to com
 - macOS: `brew install fftw`
 - Windows: instructions [here](http://www.fftw.org/install/windows.html)
 
-### Step 2: install ctmc3
+### Step 2: install `ctmc3`
 
 ``` r
 if (!require(remotes)) {
