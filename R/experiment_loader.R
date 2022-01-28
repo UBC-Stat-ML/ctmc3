@@ -10,8 +10,15 @@
 
 # dispatcher, keep updated with experiments
 #' @export
-get_sampler = function(exp_name,reg_ts,gtp_solver,tuned_pars=TRUE,
-                       use_theta_true=TRUE,...){
+get_sampler = function(
+  exp_name,
+  reg_ts,
+  gtp_solver,
+  tuned_pars_path,
+  tuned_pars      = TRUE,
+  use_theta_true  = TRUE,
+  ...)
+  {
   caller = switch(
     EXPR = exp_name,
     GHS2017_LV  = get_sampler_GHS2017_LV,
@@ -20,27 +27,42 @@ get_sampler = function(exp_name,reg_ts,gtp_solver,tuned_pars=TRUE,
     SG2019_Sch  = get_sampler_SG2019_Sch,
     MMc         = get_sampler_MMc,
     stop("Unknown experiment."))
-  res_list = do.call(caller,list(reg_ts=reg_ts))
+  res_list = do.call(caller,list(reg_ts=reg_ts))             # get the sampler constructor for the experiment
+  
+  # compile list of arguments to pass to the constructor
   alist=c(list(exp_name=exp_name,gtp_solver=gtp_solver),res_list$pars,list(...))
-  if(tuned_pars){
+  if(!missing(tuned_pars_path) || tuned_pars){               # use stored parameters
     model_string = paste0(
-      sprintf("%s_%s%s",exp_name,ifelse(reg_ts,"reg_ts_",""), gtp_solver))
-    res_path = file.path("extdata","MH_sampler_tuning",model_string)
-    alist$varmat = load_varmat( # read variance matrix
-      path_to_varmat = system.file(res_path, "varmat.txt", package = "ctmc3"),
-      par_names = alist$par_names)
-    alist$theta_0=scan(
-      system.file(res_path, "theta_0.txt", package = "ctmc3"),quiet=TRUE)
-    names(alist$theta_0)=alist$par_names
-    min_mass=scan(
-      system.file(res_path, "tuning_results.txt", package = "ctmc3"),
-      quiet=TRUE)[2L]
-    sampler = do.call("new",alist,envir = res_list$sampler_constructor)
+      sprintf("%s_%s%s",exp_name,ifelse(reg_ts,"reg_ts_",""), gtp_solver)
+    )
+    # build paths to files
+    if(!missing(tuned_pars_path)){
+      path_to_varmat = file.path(tuned_pars_path, "varmat.txt")
+      path_to_theta0 = file.path(tuned_pars_path, "theta_0.txt")
+      path_to_tunres = file.path(tuned_pars_path, "tuning_results.txt")
+    }else{
+      tuned_pars_path = file.path("extdata","MH_sampler_tuning",model_string)
+      path_to_varmat = system.file(tuned_pars_path, "varmat.txt", package = "ctmc3")
+      path_to_theta0 = system.file(tuned_pars_path, "theta_0.txt", package = "ctmc3")
+      path_to_tunres = system.file(tuned_pars_path, "tuning_results.txt", package = "ctmc3")
+    }
+    
+    # load parameters
+    alist$varmat         = load_varmat(
+      path_to_varmat = path_to_varmat,
+      par_names      = alist$par_names
+    )
+    alist$theta_0        = scan(path_to_theta0,quiet=TRUE)
+    names(alist$theta_0) = alist$par_names
+    min_mass             = scan(path_to_tunres, quiet=TRUE)[2L]
+    
+    # build sampler and set stopping times
+    sampler = do.call("new", alist, envir = res_list$sampler_constructor)
     sampler$study_convergence()
     sampler$set_AST(min_mass=min_mass)
   }else{
-    alist$theta_0=if(use_theta_true) alist$theta_true else get_rnd_theta(alist$theta_true)
-    sampler = do.call("new",alist,envir = res_list$sampler_constructor)
+    alist$theta_0 = if(use_theta_true) alist$theta_true else get_rnd_theta(alist$theta_true)
+    sampler = do.call("new", alist, envir = res_list$sampler_constructor)
   }
   return(sampler)
 }
