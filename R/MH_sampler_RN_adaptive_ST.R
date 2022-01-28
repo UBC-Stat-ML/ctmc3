@@ -133,7 +133,7 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
       min_p_geom    = 0.4,
       max_p_geom    = 0.9,
       min_eps_speed = 0.1,
-      min_decrease  = sqrt(.Machine$double.eps)
+      min_increase  = sqrt(.Machine$double.eps)
       ){
       for(ind_obs in seq_len(self$n_obs)){
         # ind_obs=5L
@@ -146,7 +146,9 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
         if(self$debug) cat(sprintf(",O_trunc_pre=%d,O_eps_pre=%.1f",O_trunc,O_eps))
 
         # set speed for the solver sequence relative to truncation
-        # also build dta_joint dataframe with joint sequence convergence info
+        # we do this by initiating at average speed, and increasing if joint sequence
+        # does not produce improvements
+        # byproduct: dta_joint dataframe with joint sequence convergence info
         N_hi_trunc  = max(list_dta$dta_trunc$N)
         N_hi_eps    = max(list_dta$dta_eps$N)
         N_trunc_vec = seq.int(O_trunc,N_hi_trunc)
@@ -159,7 +161,7 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
         while(N_trunc<N_hi_trunc && N_eps<N_hi_eps){
           i=i+1L; N_trunc = N_trunc_vec[i]; N_eps = N_eps_vec[i-1L]+eps_speed
           prob = self$trans_prob_est(ind_obs, N_trunc = N_trunc, N_eps = N_eps)
-          while(prob-prob_vec[i-1L]<min_decrease && N_eps<N_hi_eps){
+          while(prob-prob_vec[i-1L]<min_increase && N_eps<N_hi_eps){
             eps_speed=2*eps_speed; ind_last_doub=i
             N_eps = N_eps_vec[i-1L]+eps_speed
             prob = self$trans_prob_est(ind_obs,N_trunc = N_trunc,N_eps = N_eps)
@@ -344,7 +346,7 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
 
     set_AST = function(theta=self$theta_0,min_mass=0.9, slope_alpha=0.99,
                        min_p_geom=0.4, max_p_geom=0.9, min_eps_speed = 0.1,
-                       min_decrease=sqrt(.Machine$double.eps)){
+                       min_increase=sqrt(.Machine$double.eps)){
       list_dta = self$dta_adapt[[1L]]
 
       # find preliminary offsets to avoid additional computing later
@@ -361,7 +363,8 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
       while(N_trunc<N_hi_trunc && N_eps<N_hi_eps){
         i=i+1L; N_trunc = N_trunc_vec[i]; N_eps = N_eps_vec[i-1L]+eps_speed
         ll = self$loglik_biased(theta,N_trunc = N_trunc, N_eps = N_eps)
-        while(ll-ll_vec[i-1L]<min_decrease && N_eps<N_hi_eps){
+        while(ll-ll_vec[i-1L]<min_increase && N_eps<N_hi_eps){
+          if(self$debug) cat("eps_speed doubled.\n")
           eps_speed=2*eps_speed; ind_last_doub=i
           N_eps = N_eps_vec[i-1L]+eps_speed
           ll = self$loglik_biased(theta,N_trunc = N_trunc, N_eps = N_eps)
