@@ -127,28 +127,38 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
       return(ind_origin) # note: returns index not an actual N
     },
 
-    set_AST = function(min_mass=0.9, slope_alpha=0.99,
-                       min_p_geom=0.4, max_p_geom=0.9, eps_speed_def = 0.1,
-                       min_decrease=sqrt(.Machine$double.eps)){
+    set_AST = function(
+      min_mass      = 0.9,
+      slope_alpha   = 0.99,
+      min_p_geom    = 0.4,
+      max_p_geom    = 0.9,
+      min_eps_speed = 0.1,
+      min_decrease  = sqrt(.Machine$double.eps)
+      ){
       for(ind_obs in seq_len(self$n_obs)){
         # ind_obs=5L
-        if(self$debug)cat(sprintf("set_AST: obs=%d",ind_obs))
+        if(self$debug) cat(sprintf("set_AST: obs=%d",ind_obs))
+        
         # find preliminary offsets to avoid additional computing later
         list_dta = self$dta_adapt[[ind_obs]]
-        O_trunc=with(list_dta,dta_trunc$N[self$find_offset(dta_trunc,min_mass)])
-        O_eps = with(list_dta,dta_eps$N[self$find_offset(dta_eps,min_mass)])
-        if(self$debug)cat(sprintf(",O_trunc_pre=%d,O_eps_pre=%.1f",O_trunc,O_eps))
+        O_trunc  = with(list_dta, dta_trunc$N[self$find_offset(dta_trunc, min_mass)])
+        O_eps    = with(list_dta, dta_eps$N[self$find_offset(dta_eps, min_mass)])
+        if(self$debug) cat(sprintf(",O_trunc_pre=%d,O_eps_pre=%.1f",O_trunc,O_eps))
 
         # set speed for the solver sequence relative to truncation
-        N_hi_trunc=max(list_dta$dta_trunc$N);N_hi_eps=max(list_dta$dta_eps$N)
-        N_trunc_vec=seq.int(O_trunc,N_hi_trunc);prob_vec=numeric(length(N_trunc_vec))
-        eps_speed = max(eps_speed_def,(N_hi_eps-O_eps)/length(N_trunc_vec)) # init at default
-        N_eps_vec=numeric(length(N_trunc_vec));N_eps_vec[1L]=O_eps
-        prob_vec[1L] = self$trans_prob_est(ind_obs,N_trunc = O_trunc,N_eps = O_eps)
+        # also build dta_joint dataframe with joint sequence convergence info
+        N_hi_trunc  = max(list_dta$dta_trunc$N)
+        N_hi_eps    = max(list_dta$dta_eps$N)
+        N_trunc_vec = seq.int(O_trunc,N_hi_trunc)
+        prob_vec    = numeric(length(N_trunc_vec))
+        eps_speed   = max(min_eps_speed,(N_hi_eps-O_eps)/length(N_trunc_vec)) # init at default
+        N_eps_vec   = numeric(length(N_trunc_vec))
+        N_eps_vec[1L] = O_eps
+        prob_vec[1L]  = self$trans_prob_est(ind_obs,N_trunc = O_trunc,N_eps = O_eps)
         i=1L;N_trunc = N_trunc_vec[i]; N_eps=O_eps; ind_last_doub=1L
         while(N_trunc<N_hi_trunc && N_eps<N_hi_eps){
           i=i+1L; N_trunc = N_trunc_vec[i]; N_eps = N_eps_vec[i-1L]+eps_speed
-          prob = self$trans_prob_est(ind_obs,N_trunc = N_trunc, N_eps = N_eps)
+          prob = self$trans_prob_est(ind_obs, N_trunc = N_trunc, N_eps = N_eps)
           while(prob-prob_vec[i-1L]<min_decrease && N_eps<N_hi_eps){
             eps_speed=2*eps_speed; ind_last_doub=i
             N_eps = N_eps_vec[i-1L]+eps_speed
@@ -161,32 +171,32 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
         N_trunc_vec=N_trunc_vec[1L:i]
         if(ind_last_doub<=2L){
           N_eps_vec=N_eps_vec[1L:i];prob_vec=prob_vec[1L:i]
-        }else{# need to reconstruct joint seq
+        }else{                                       # need to reconstruct joint seq
           N_eps_vec=seq(O_eps,by=eps_speed,length.out = i)
           prob_vec_new=numeric(i)
-          prob_vec_new[1L]=prob_vec[1L] # at least the origin is correct
+          prob_vec_new[1L]=prob_vec[1L]              # at least the origin is correct
           for(j in seq.int(2L,i)){
             prob_vec_new[j] = self$trans_prob_est(
               ind_obs,N_trunc = N_trunc_vec[j], N_eps = N_eps_vec[j])
           }
           prob_vec=prob_vec_new
         }
-        # build joint seq dataframe
-        dta_joint=data.frame(
-          N=N_trunc_vec,N_trunc=N_trunc_vec,N_eps=N_eps_vec,
-          prob_vec=prob_vec, cauchy_err=c(NA_real_,diff(prob_vec)))
+        dta_joint=data.frame(                        # store results
+          N=N_trunc_vec, N_trunc=N_trunc_vec, N_eps=N_eps_vec,
+          prob_vec=prob_vec, cauchy_err=c(NA_real_,diff(prob_vec))
+        )
 
         # find joint offsets
-        ind_origin=self$find_offset(dta_joint,min_mass)
-        O_trunc=dta_joint$N_trunc[ind_origin];O_eps=dta_joint$N_eps[ind_origin]
-        if(self$debug)cat(sprintf(",O_trunc=%d,O_eps=%.1f",O_trunc,O_eps))
-
-        # check if we have enough data for regression (>=5 points)
-        if(ind_origin>=nrow(dta_joint)-3L){
-          p_geom=max_p_geom # we're at the very end of acceptable error
+        ind_origin = self$find_offset(dta_joint,min_mass)
+        O_trunc    = dta_joint$N_trunc[ind_origin]
+        O_eps      = dta_joint$N_eps[ind_origin]
+        if(self$debug) cat(sprintf(",O_trunc=%d,O_eps=%.1f",O_trunc,O_eps))
+        
+        # set parameter of geometric stop time by mimicking optimal stopping
+        # probability: pmf(n) \propto X_n+1 - X_n
+        if(ind_origin>=nrow(dta_joint)-3L){          # check if we have enough data for regression (>=5 points)
+          p_geom=max_p_geom                          # we're at the very end of acceptable error
         }else{
-          # find decay of geometric stop time by mimicking optimal stopping
-          # probability pmf(n) \propto X_n+1 - X_n
           shft=min(0,min(dta_joint$cauchy_err[-1L]))
           stop_prob=dta_joint$cauchy_err[-1L]-shft # shift to ensure >=0
           stop_prob=if(length(stop_prob)==1L) 1 else stop_prob/sum(stop_prob)
@@ -333,7 +343,7 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
     },
 
     set_AST = function(theta=self$theta_0,min_mass=0.9, slope_alpha=0.99,
-                       min_p_geom=0.4, max_p_geom=0.9, eps_speed_def = 0.1,
+                       min_p_geom=0.4, max_p_geom=0.9, min_eps_speed = 0.1,
                        min_decrease=sqrt(.Machine$double.eps)){
       list_dta = self$dta_adapt[[1L]]
 
@@ -344,7 +354,7 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
       # set speed for the solver sequence relative to truncation
       N_hi_trunc=max(list_dta$dta_trunc$N);N_hi_eps=max(list_dta$dta_eps$N)
       N_trunc_vec=seq.int(O_trunc,N_hi_trunc);ll_vec=numeric(length(N_trunc_vec))
-      eps_speed = max(eps_speed_def,(N_hi_eps-O_eps)/length(N_trunc_vec)) # init at default
+      eps_speed = max(min_eps_speed,(N_hi_eps-O_eps)/length(N_trunc_vec)) # init at default
       N_eps_vec=numeric(length(N_trunc_vec));N_eps_vec[1L]=O_eps
       ll_vec[1L] = self$loglik_biased(theta,N_trunc = O_trunc,N_eps = O_eps)
       i=1L;N_trunc = N_trunc_vec[i]; N_eps=O_eps; ind_last_doub=1L
