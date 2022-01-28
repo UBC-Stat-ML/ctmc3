@@ -93,8 +93,8 @@ MHSamplerReactNet = R6::R6Class(
     ldprior    = function(...){stop("not implemented")}, # log-density of prior of theta
     loglik     = function(...){stop("not implemented")}, # log likelihood
     ldtarget   = function(theta){                        # get posterior logdensity
-      ldp  = unname(self$ldprior(theta))    # prior contribution
-      if(is.infinite(ldp) && S_N1 < 0){     
+      ldp = unname(self$ldprior(theta))     # prior contribution
+      if(is.infinite(ldp) && ldp < 0){     
           llik = -Inf                       # avoid computing likelihood when prior=0
       } else {
           llik = unname(self$loglik(theta)) # likelihood contribution
