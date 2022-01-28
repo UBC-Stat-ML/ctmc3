@@ -1,5 +1,7 @@
 ###############################################################################
 # instantiate a sampler object for a given experiment
+# note: the fields in "tuning_results.txt" files are
+#   sd_thresh min_mass   sd_loglik time_per_loglik varmat_mult total_sampling_time ess_mean ess_per_min
 ###############################################################################
 
 #######################################

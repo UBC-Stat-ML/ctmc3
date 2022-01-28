@@ -162,6 +162,7 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
           i=i+1L; N_trunc = N_trunc_vec[i]; N_eps = N_eps_vec[i-1L]+eps_speed
           prob = self$trans_prob_est(ind_obs, N_trunc = N_trunc, N_eps = N_eps)
           while(prob-prob_vec[i-1L]<min_increase && N_eps<N_hi_eps){
+            if(self$debug) cat("eps_speed doubled.\n")
             eps_speed=2*eps_speed; ind_last_doub=i
             N_eps = N_eps_vec[i-1L]+eps_speed
             prob = self$trans_prob_est(ind_obs,N_trunc = N_trunc,N_eps = N_eps)
