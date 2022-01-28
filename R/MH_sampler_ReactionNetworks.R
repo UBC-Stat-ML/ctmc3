@@ -89,13 +89,16 @@ MHSamplerReactNet = R6::R6Class(
     ######################################################################
     
     # translate between state of the sampler and the underlying CTMC object
-    set_params=function(theta) {self$CTMC$react_rates = theta},
-    ldprior = function(...){stop("not implemented")}, # log-density of prior of theta
-    loglik = function(...){stop("not implemented")}, # log likelihood
-    # get posterior logdensity
-    ldtarget = function(theta){
-      ldp = unname(self$ldprior(theta)) # prior contribution
-      llik = unname(self$loglik(theta)) # log likelihood contribution
+    set_params = function(theta) {self$CTMC$react_rates = theta},
+    ldprior    = function(...){stop("not implemented")}, # log-density of prior of theta
+    loglik     = function(...){stop("not implemented")}, # log likelihood
+    ldtarget   = function(theta){                        # get posterior logdensity
+      ldp  = unname(self$ldprior(theta))    # prior contribution
+      if(is.infinite(ldp) && S_N1 < 0){     
+          llik = -Inf                       # avoid computing likelihood when prior=0
+      } else {
+          llik = unname(self$loglik(theta)) # likelihood contribution
+      }
       return(list(target = ldp+llik, loglik = llik, prior = ldp))
     },
     
@@ -111,7 +114,6 @@ MHSamplerReactNet = R6::R6Class(
     # can be written as a conic combination of the update vectors, 
     # i.e., U^T * x = ds, with x>=0. We get the shortest path by minimizing
     # the L1 norm of x subject to these constraints. This is a linear program!
-    # Note: should we use this instead? https://en.wikipedia.org/wiki/A*_search_algorithm ??
     # TODO: no support for absolute upper bound
     set_base_state_spaces_shortest_path = function(){
       # solve for the minimal combination of updates that yields given endpoints
@@ -603,31 +605,6 @@ MHSamplerReactNetRTS = R6::R6Class(
       sum(log(self$get_all_trans_probs_est(theta,N_trunc,N_eps)))
     },
     
-    # wrong computation of log(unbiased estimate of likelihood)
-    # problem: we are taking log(product(unbiased_trprob(obs_i)))
-    # but E[product(unbiased_trprob(obs_i))] \neq product(trprob(obs_i)) =: likelihood
-    # this is because all terms in the product are dependent because they
-    # use the same stopping time N!!
-    loglik_wrong = function(theta){
-      if(any(theta<0)) return(-Inf)
-      self$set_params(theta) # translate theta to model's parameters, and set it
-      stop_time=self$st_list[[1L]]
-      rtime = stop_time$rtime(); N=rtime$N
-      N_trunc=rtime$N_trunc; N_eps=rtime$N_eps; prob = rtime$pmf
-      if(self$verbose) cat(sprintf("loglik: N=%d, N_trunc=%d, N_eps=%.1f\n",
-                                   N, N_trunc,N_eps))
-      # note: p_X's are vectors
-      p_N = self$get_all_trans_probs_est(theta,N_trunc,N_eps)
-      p_N1 = self$get_all_trans_probs_est(theta,N_trunc+1L,N_eps+stop_time$eps_speed)
-      if(N==0L){
-        p_O=p_N
-      }else{
-        p_O=self$get_all_trans_probs_est(theta,stop_time$O_trunc,stop_time$O_eps)
-      }
-      Z = pmax(0,p_O+(p_N1-p_N)/prob) # need to truncate at 0 only because of rounding errors e.g., -0.000000000001
-      return(sum(log(Z)))
-    },
-    
     # get log of unbiased estimate of likelihood
     # Want: log(Z) where Z = prod(p_O)+(prod(pN1)-prod(pN))/pmf(N)
     # Factorizing:
@@ -646,7 +623,6 @@ MHSamplerReactNetRTS = R6::R6Class(
     # If pN1>pN>0 but pO=0, we have Z = (pN1-pN)/prob = (exp(SN1)-exp(SN))/prob
     # = exp(SN)(exp(SN1-SN)-1)/prob = exp(SN-log(prob))expm1(SN1-SN)
     # Hence, logZ = SN - log(prob) + log(expm1(SN1-SN))
-    # Alternatively (not used), note that log(exp(x)-1) = log(1+(exp(x)-2)) = log1p(exp(x)-2)
     # Note: we use max(0,) to enforce monotonicity where numerical accuracy could fail
     loglik = function(theta){
       if(any(theta<0)) return(-Inf)
@@ -657,22 +633,23 @@ MHSamplerReactNetRTS = R6::R6Class(
       if(self$verbose) cat(sprintf("loglik: N=%d, N_trunc=%d, N_eps=%.1f\n",
                                    N, N_trunc,N_eps))
       # note: p_X's are vectors
-      p_N = self$get_all_trans_probs_est(theta,N_trunc,N_eps)
+      p_N  = self$get_all_trans_probs_est(theta,N_trunc,N_eps)
       p_N1 = self$get_all_trans_probs_est(theta,N_trunc+1L,N_eps+stop_time$eps_speed)
-      S_N=sum(log(p_N));S_N1=sum(log(p_N1))
-      if(is.infinite(S_N1)) return(-Inf) # means that all 3 are 0 (by domination)
-      if(is.infinite(S_N)) return(S_N1-lprob) # Z= 0 + (pN1-0)/prob = pN1/prob
+      S_N  = sum(log(p_N))
+      S_N1 = sum(log(p_N1))
+      if(is.infinite(S_N1) && S_N1 < 0) return(-Inf)       # means that all 3 are 0 (by domination)
+      if(is.infinite(S_N)  && S_N  < 0) return(S_N1-lprob) # Z= 0 + (pN1-0)/prob = pN1/prob
       if(N==0L){
         p_O=p_N;S_O=S_N
       }else{
         p_O=self$get_all_trans_probs_est(theta,stop_time$O_trunc,stop_time$O_eps)
         S_O=sum(log(p_O))
-        if(is.infinite(S_O)) 
+        if(is.infinite(S_O) && S_O < 0) 
           return(S_N - lprob + log(expm1(max(0,S_N1-S_N))))
       }
       # compute log(Z) when all terms are finite
-      w = exp(max(0,S_N-S_O)-lprob)*expm1(max(0,S_N1-S_N))
-      logZ = S_O+log1p(w)
+      w = exp(max(0, S_N - S_O) - lprob) * expm1(max(0, S_N1 - S_N))
+      logZ = S_O + log1p(w)
       return(logZ)
     },
     
