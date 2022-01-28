@@ -36,16 +36,13 @@ get_sampler = function(
       sprintf("%s_%s%s",exp_name,ifelse(reg_ts,"reg_ts_",""), gtp_solver)
     )
     # build paths to files
-    if(!missing(tuned_pars_path)){
-      path_to_varmat = file.path(tuned_pars_path, "varmat.txt")
-      path_to_theta0 = file.path(tuned_pars_path, "theta_0.txt")
-      path_to_tunres = file.path(tuned_pars_path, "tuning_results.txt")
-    }else{
-      tuned_pars_path = file.path("extdata","MH_sampler_tuning",model_string)
-      path_to_varmat = system.file(tuned_pars_path, "varmat.txt", package = "ctmc3")
-      path_to_theta0 = system.file(tuned_pars_path, "theta_0.txt", package = "ctmc3")
-      path_to_tunres = system.file(tuned_pars_path, "tuning_results.txt", package = "ctmc3")
-    }
+    if(missing(tuned_pars_path))
+      tuned_pars_path = file.path(
+        system.file(package="ctmc3"), "extdata", "MH_sampler_tuning", model_string
+      )
+    path_to_varmat = file.path(tuned_pars_path, "varmat.txt")
+    path_to_theta0 = file.path(tuned_pars_path, "theta_0.txt")
+    path_to_tunres = file.path(tuned_pars_path, "tuning_results.txt")
     
     # load parameters
     alist$varmat         = load_varmat(
