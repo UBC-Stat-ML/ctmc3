@@ -606,6 +606,7 @@ MHSamplerReactNetRTS = R6::R6Class(
     },
     
     # get log of unbiased estimate of likelihood
+    # we de-bias the *product of all terms* without explicitly computing products
     # Want: log(Z) where Z = prod(p_O)+(prod(pN1)-prod(pN))/pmf(N)
     # Factorizing:
     # Z = prod(p_O)[1+(prod(pN1)-prod(pN))/(pmf(N)prod(p_O))]
@@ -617,13 +618,13 @@ MHSamplerReactNetRTS = R6::R6Class(
     # = exp(S_N-S_O)[exp(S_N1-S_N)-1]/pmf(N)
     # = exp(S_N-S_O-log(pmf(N)))expm1(S_N1-S_N) =: w
     # Finally, log(Z) = S_O + log1p(w)
-    # PROBLEM: need to handle 0 likelihoods!
+    # We need to be able to handle cases where S = -Inf
     # When pN1 =0 => pO=pN=0 (by monotonicity) => ans = -Inf
     # If pN1>0 but pO=pN=0, we have Z = pN1/prob => logZ = SN1-log(pmf(N))
     # If pN1>pN>0 but pO=0, we have Z = (pN1-pN)/prob = (exp(SN1)-exp(SN))/prob
     # = exp(SN)(exp(SN1-SN)-1)/prob = exp(SN-log(prob))expm1(SN1-SN)
     # Hence, logZ = SN - log(prob) + log(expm1(SN1-SN))
-    # Note: we use max(0,) to enforce monotonicity where numerical accuracy could fail
+    # Note: we use max(0,) to deal with numerical inaccuracies
     loglik = function(theta){
       if(any(theta<0)) return(-Inf)
       self$set_params(theta) # translate theta to model's parameters, and set it
