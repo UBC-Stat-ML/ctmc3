@@ -132,7 +132,7 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
       slope_alpha   = 0.99,
       min_p_geom    = 0.4,
       max_p_geom    = 0.9,
-      min_eps_speed = 0.1,
+      min_eps_speed = if(self$correct_unif) 20.0 else 0.1,
       min_increase  = 0 #sqrt(.Machine$double.eps)
       ){
       for(ind_obs in seq_len(self$n_obs)){
@@ -351,7 +351,7 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
       slope_alpha   = 0.99,
       min_p_geom    = 0.4,
       max_p_geom    = 0.9,
-      min_eps_speed = 0.1,
+      min_eps_speed = if(self$correct_unif) 20.0 else 0.1,
       min_increase  = 0 #sqrt(.Machine$double.eps)
       ){
       list_dta = self$dta_adapt[[1L]]

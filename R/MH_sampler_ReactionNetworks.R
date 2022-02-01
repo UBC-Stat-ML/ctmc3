@@ -8,23 +8,26 @@ MHSamplerReactNet = R6::R6Class(
   classname = "MHSamplerReactNet",
   inherit = MHSampler,
   public = list(
-    exp_name=NULL, # optional: name of the experiment
-    dta = NULL, # list with components s_pre (jump from), s (jump to), dt (time step)
-    CTMC = NULL, # CTMC object representing the reaction network
-    n_obs=NULL,n_spec=NULL,n_react=NULL, # relevant dimensions
-    state_spaces = NULL, # a list with increasing collections of state spaces. A collection is again a list containing a matrix of states (a state space)
-    obs_indices = NULL, # contains the position of every observation in each statespace
-    update_indices = NULL, # similar to state_spaces, for each state space we have which reaction (if it exists) gets us from each state to another
+    exp_name          = NULL, # optional: name of the experiment
+    dta               = NULL, # list with components s_pre (jump from), s (jump to), dt (time step)
+    CTMC              = NULL, # CTMC object representing the reaction network
+    n_obs             = NULL, # number of observations
+    n_spec            = NULL, # number of species
+    n_react           = NULL, # number of reactions
+    state_spaces      = NULL, # a list with increasing collections of state spaces. A collection is again a list containing a matrix of states (a state space)
+    obs_indices       = NULL, # contains the position of every observation in each statespace
+    update_indices    = NULL, # similar to state_spaces, for each state space we have which reaction (if it exists) gets us from each state to another
     up_csv_hash_table = NULL, # "csv" version of the updates stored as hashed environment (fast lookup)
-    varmat = NULL, # variance of proposal
-    chmat  = NULL, # Cholesky decomposition of proposal
-    ss_lbound = NULL, # absolute lower bound for state spaces
-    ss_ubound = NULL, # absolute upper bound for state spaces
-    gtp_solver=NULL, # solver used by get_trans_prob
-    verbose = NULL, # logical, print stoptime? passed to get_trans_prob
-    debug = NULL, # debug mode?
-    initialize = function(exp_name=NULL,dta, CTMC, varmat, gtp_solver="unif",
-                          ss_lbound, ss_ubound, verbose=FALSE, debug=FALSE,...){
+    varmat            = NULL, # variance of proposal
+    chmat             = NULL, # Cholesky decomposition of proposal
+    ss_lbound         = NULL, # absolute lower bound for state spaces
+    ss_ubound         = NULL, # absolute upper bound for state spaces
+    gtp_solver        = NULL, # solver used by get_trans_prob
+    correct_unif      = NULL, # logical: should we correct for non-double-monotonicity in sequential uniformization?
+    verbose           = NULL, # logical, print stoptime? passed to get_trans_prob
+    debug             = NULL, # debug mode?
+    initialize = function(exp_name = NULL, dta, CTMC, varmat, gtp_solver = "unif",
+                          ss_lbound, ss_ubound, verbose = FALSE, debug = FALSE, ...){
       super$initialize(...)
       self$exp_name=exp_name
       self$dta = dta
@@ -34,13 +37,20 @@ MHSamplerReactNet = R6::R6Class(
       self$n_react=nrow(self$CTMC$updates)
       if(missing(varmat)) varmat=0.1*diag(self$theta_0^2)
       self$set_varmat(varmat)
-      self$gtp_solver=gtp_solver
       if(missing(ss_lbound)) ss_lbound=rep.int(0L,self$n_spec)
       self$ss_lbound = ss_lbound
       if(missing(ss_ubound)) ss_ubound=rep(Inf,self$n_spec)
       self$ss_ubound=ss_ubound
       self$verbose=verbose
       self$debug=debug
+      
+      # select matrix exponentiation algorithm
+      self$correct_unif = FALSE
+      if(gtp_solver == "correct_unif"){
+        self$correct_unif = TRUE
+        gtp_solver        = "unif"
+      }
+      self$gtp_solver = gtp_solver
       
       # initialize hash table of updates
       # key: fingerprint of the reaction (csv'd update vector) / value: index of the reaction
