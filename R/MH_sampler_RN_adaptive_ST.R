@@ -385,22 +385,19 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
       return(ind_origin) # note: returns index not an actual N
     },
 
-    set_AST = function(
+    study_joint_convergence = function(
       theta         = self$theta_0,
       min_mass      = 0.8,
-      slope_alpha   = 0.99,
-      min_p_geom    = 0.4,
-      max_p_geom    = 0.9,
       min_eps_speed = if(self$correct_unif) 20.0 else 0.1,
       tol           = sqrt(.Machine$double.eps)
       ){
-      list_dta = self$dta_adapt[[1L]]
 
       # find preliminary offsets and eps_speed, and init storage
-      O_trunc       = with(list_dta,dta_trunc$N[self$find_offset(dta_trunc,min_mass)])
-      O_eps         = with(list_dta,dta_eps$N[self$find_offset(dta_eps,min_mass)])
-      N_hi_trunc    = max(list_dta$dta_trunc$N)
-      N_hi_eps      = max(list_dta$dta_eps$N)
+      dta_adapt     = self$dta_adapt[[1L]]
+      O_trunc       = with(dta_adapt,dta_trunc$N[self$find_offset(dta_trunc,min_mass)])
+      O_eps         = with(dta_adapt,dta_eps$N[self$find_offset(dta_eps,min_mass)])
+      N_hi_trunc    = max(dta_adapt$dta_trunc$N)
+      N_hi_eps      = max(dta_adapt$dta_eps$N)
       N_trunc_vec   = seq.int(O_trunc,N_hi_trunc)
       N_eps_vec     = numeric(length(N_trunc_vec))
       N_eps_vec[1L] = O_eps
@@ -423,7 +420,7 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
         
         # this loop corrects for the potential non-double-monotonicity of unif
         # by doubling eps_speed until the joint sequence is increasing
-        while(ll-ll_vec[i-1L]<0 && ll+tol<ll_true){
+        while(ll<ll_vec[i-1L] && ll+tol<ll_true){
           if(self$debug) cat("eps_speed doubled.\n")
           eps_speed     = 2*eps_speed
           ind_last_doub = i
@@ -460,9 +457,7 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
         ll_cauchy_err = c(NA_real_,diff(ll_vec))
       )
       
-      # TODO: maybe take all code before this and call it study_joint_convergence()?
-
-      # compute {X_{n+1}-X_n} seq from {l_n} seq.
+      # compute {X_{n+1}-X_n} (wrongly called "Cauchy" error by me...) seq from {l_n} seq.
       # subtract min(ll_vec) to normalize and avoid underflow in exp()
       dta_joint$cauchy_err=c(
         NA_real_,
@@ -473,8 +468,24 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
       cauchy_err[is.nan(cauchy_err) | is.infinite(cauchy_err)]=0
       floor_cerr=pmin(1E-5*max(cauchy_err),.Machine$double.eps)
       dta_joint$cauchy_err=c(NA_real_,pmax(floor_cerr,cauchy_err))
-
-      # find joint offsets (needs to have Cauchy error already)
+      
+      self$dta_adapt[[1L]]$dta_joint = dta_joint
+    },
+    
+    set_AST = function(
+      min_mass      = 0.8,
+      slope_alpha   = 0.99,
+      min_p_geom    = 0.4,
+      max_p_geom    = 0.9
+    ){
+      # check if joint convergence data exists
+      if(!( "dta_joint" %in% names(self$dta_adapt[[1]]) )){
+        cat("Joint convergence data not found, so doing that first\n")
+        self$study_joint_convergence(min_mass = min_mass)
+      }
+      dta_joint = self$dta_adapt[[1L]]$dta_joint
+      
+      # find joint offsets
       # NOTE: no need to recompute eps_speed because we set offsets via the
       # the the same N_vec so speed is maintained
       ind_origin=self$find_offset(dta_joint,min_mass)
@@ -511,10 +522,13 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
       }
 
       # store results and stop_time
-      self$dta_adapt[[1L]]$dta_joint=dta_joint
       stop_time=GeometricST$new(
-        O_trunc=O_trunc,O_eps=O_eps,prob=p_geom,eps_speed=eps_speed)
-      self$st_list[[1L]]=stop_time
+        O_trunc   = O_trunc,
+        O_eps     = O_eps,
+        prob      = p_geom,
+        eps_speed = dta_joint$N_eps[2] - dta_joint$N_eps[1]
+      )
+      self$st_list[[1L]] = stop_time
     }
   )
 )

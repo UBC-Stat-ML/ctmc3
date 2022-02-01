@@ -372,7 +372,7 @@ MHSamplerReactNet = R6::R6Class(
     # estimate std dev of the residual log likelihood and time to compute for
     # a given min_mass_vec.
     # Note: no need to re-study convergence since this is used only as good guess
-    # for setting offsets inside set_AST
+    # for setting stopping time parameters inside set_AST
     est_sd_loglik = function(min_mass_vec, R=200L, n_chains, alpha=0.99){
       res_list=parallel::mclapply(
         X=seq_along(min_mass_vec),FUN=function(r){
