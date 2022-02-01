@@ -16,8 +16,7 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
     study_convergence = function(theta=self$theta_0,
                                  max_err_thresh = sqrt(.Machine$double.eps),
                                  N_lo_eps = if(self$gtp_solver=="skeletoid") -10L else 0L){
-      self$set_params(theta)                             # translate theta to CTMC's parameters, and set it
-      if(!is.null(self$dta_adapt)) self$dta_adapt = NULL # if exists, remove previous data
+      self$set_params(theta) # translate theta to CTMC's parameters, and set it
       dta_adapt = vector("list", self$n_obs)
       for(ind_obs in seq_len(self$n_obs)){
         # ind_obs=10L
@@ -216,11 +215,9 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
       max_p_geom  = 0.9
       ){
       
-      # check if joint convergence data exists
-      if(!( "dta_joint" %in% names(self$dta_adapt[[1]]) )){
-        cat("Joint convergence data not found, so doing that first\n")
-        self$study_joint_convergence(min_mass=min_mass)
-      }
+      # note: joint convergence data is built using a given min_mass so it cannot
+      # be reused. it must be recalculated every time we change min_mass
+      self$study_joint_convergence(min_mass = min_mass)
       
       for(ind_obs in seq_len(self$n_obs)){
         # ind_obs=5L
@@ -301,8 +298,7 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
                                  min_ll_thresh = -700,
                                  N_lo_eps = if(self$gtp_solver=="skeletoid") -10L else 0L){
       cat("\nStudying convergence of the likelihood\n")
-      if(!is.null(self$dta_adapt)) self$dta_adapt = NULL # if exists, remove previous data
-      
+
       # set N_eps high and study truncation Cauchy error
       N_hi_eps=as.integer(-log10(max_err_thresh))
       N_trunc=0L; old_ll=min_ll_thresh; ll_cauchy_err=1; dta_trunc=data.frame()
@@ -480,11 +476,9 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
       min_p_geom    = 0.4,
       max_p_geom    = 0.9
     ){
-      # check if joint convergence data exists
-      if(!( "dta_joint" %in% names(self$dta_adapt[[1]]) )){
-        cat("Joint convergence data not found, so doing that first\n")
-        self$study_joint_convergence(min_mass = min_mass)
-      }
+      # note: joint convergence data is built using a given min_mass so it cannot
+      # be reused. it must be recalculated every time we change min_mass.
+      self$study_joint_convergence(min_mass = min_mass)
       dta_joint = self$dta_adapt[[1L]]$dta_joint
       
       # find joint offsets
