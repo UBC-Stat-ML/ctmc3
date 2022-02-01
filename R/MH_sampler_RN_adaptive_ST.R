@@ -16,8 +16,9 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
     study_convergence = function(theta=self$theta_0,
                                  max_err_thresh = sqrt(.Machine$double.eps),
                                  N_lo_eps = if(self$gtp_solver=="skeletoid") -10L else 0L){
-      self$set_params(theta) # translate theta to CTMC's parameters, and set it
-      dta_adapt=vector("list",self$n_obs)
+      self$set_params(theta)                             # translate theta to CTMC's parameters, and set it
+      if(!is.null(self$dta_adapt)) self$dta_adapt = NULL # if exists, remove previous data
+      dta_adapt = vector("list", self$n_obs)
       for(ind_obs in seq_len(self$n_obs)){
         # ind_obs=10L
         cat(sprintf("\nStudying convergence for obs %d\n",ind_obs))
@@ -300,7 +301,8 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
                                  min_ll_thresh = -700,
                                  N_lo_eps = if(self$gtp_solver=="skeletoid") -10L else 0L){
       cat("\nStudying convergence of the likelihood\n")
-
+      if(!is.null(self$dta_adapt)) self$dta_adapt = NULL # if exists, remove previous data
+      
       # set N_eps high and study truncation Cauchy error
       N_hi_eps=as.integer(-log10(max_err_thresh))
       N_trunc=0L; old_ll=min_ll_thresh; ll_cauchy_err=1; dta_trunc=data.frame()
@@ -522,7 +524,7 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
       }
 
       # store results and stop_time
-      stop_time=GeometricST$new(
+      stop_time = GeometricST$new(
         O_trunc   = O_trunc,
         O_eps     = O_eps,
         prob      = p_geom,
