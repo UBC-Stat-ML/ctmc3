@@ -38,28 +38,35 @@ get_sampler = function(
     # build paths to files
     if(missing(tuned_pars_path))
       tuned_pars_path = file.path(
-        system.file(package="ctmc3"), "extdata", "MH_sampler_tuning", model_string
+        system.file(package="ctmc3"), "extdata", "MH_sampler_tuning"
       )
-    path_to_varmat = file.path(tuned_pars_path, "varmat.txt")
-    path_to_theta0 = file.path(tuned_pars_path, "theta_0.txt")
-    path_to_tunres = file.path(tuned_pars_path, "tuning_results.txt")
+    model_pars     = file.path(tuned_pars_path, model_string)
+    path_to_varmat = file.path(model_pars, "varmat.txt")
+    path_to_theta0 = file.path(model_pars, "theta_0.txt")
+    # path_to_tunres = file.path(model_pars, "tuning_results.txt")
+    path_to_st_dta = file.path(model_pars, "st_dta.txt")
     
     # load parameters
-    alist$varmat         = load_varmat(
+    alist$varmat = load_varmat(
       path_to_varmat = path_to_varmat,
       par_names      = alist$par_names
     )
-    alist$theta_0        = scan(path_to_theta0,quiet=TRUE)
+    alist$theta_0        = scan(path_to_theta0, quiet = TRUE)
     names(alist$theta_0) = alist$par_names
-    min_mass             = scan(path_to_tunres, quiet=TRUE)[2L]
+    # min_mass             = scan(path_to_tunres, quiet=TRUE)[2L]
+    st_dta               = read.table(path_to_st_dta, header = TRUE)
     
     # build sampler and set stopping times
     sampler = do.call("new", alist, envir = res_list$sampler_constructor)
-    sampler$study_convergence()
-    sampler$set_AST(min_mass=min_mass)
+    sampler$st_list = lapply(
+      seq_len(nrow(st_dta)),
+      function(i){ do.call(GeometricST$new, st_dta[i,]) }
+    )
+    # sampler$study_convergence()
+    # sampler$set_AST(min_mass=min_mass)
   }else{
     alist$theta_0 = if(use_theta_true) alist$theta_true else get_rnd_theta(alist$theta_true)
-    sampler = do.call("new", alist, envir = res_list$sampler_constructor)
+    sampler       = do.call("new", alist, envir = res_list$sampler_constructor)
   }
   return(sampler)
 }
