@@ -126,86 +126,84 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
       ind_origin=max(ind_origin,which(pmf_0>min_mass)[1L])
       return(ind_origin) # note: returns index not an actual N
     },
-
-    study_joint_convergence = function(
+    
+    # called only within set_AST (below)
+    study_joint_convergence_one_obs = function(
+      ind_obs,
       min_mass      = 0.8,
       min_eps_speed = if(self$correct_unif) 20.0 else 0.1,
       tol           = sqrt(.Machine$double.eps)
-      ){
-      for(ind_obs in seq_len(self$n_obs)){
-        # ind_obs=5L
-        if(self$debug) cat(sprintf("Joint-conv: obs=%d",ind_obs))
+    ){
+      # find preliminary offsets and eps_speed, and init storage
+      dta_adapt     = self$dta_adapt[[ind_obs]]
+      O_trunc       = with(dta_adapt, dta_trunc$N[self$find_offset(dta_trunc, min_mass)])
+      O_eps         = with(dta_adapt, dta_eps$N[self$find_offset(dta_eps, min_mass)])
+      N_hi_trunc    = max(dta_adapt$dta_trunc$N)
+      N_hi_eps      = max(dta_adapt$dta_eps$N)
+      N_trunc_vec   = seq.int(O_trunc,N_hi_trunc)
+      prob_vec      = numeric(length(N_trunc_vec))
+      eps_speed     = max(min_eps_speed,(N_hi_eps-O_eps)/length(N_trunc_vec)) # init at default
+      N_eps_vec     = numeric(length(N_trunc_vec))
+      N_eps_vec[1L] = O_eps
+      prob_vec[1L]  = self$trans_prob_est(ind_obs,N_trunc = O_trunc,N_eps = O_eps)
+      if(self$debug) cat(sprintf(", O_trunc_pre=%d, O_eps_pre=%.1f",O_trunc,O_eps))
+      
+      # explore joint convergence, check monotonicity holds (it must except for unif)
+      i             = 1L
+      N_trunc       = N_trunc_vec[i]
+      N_eps         = O_eps
+      ind_last_doub = 1L
+      prob          = prob_vec[1L]
+      prob_true     = max(dta_adapt$dta_trunc$prob_vec, dta_adapt$dta_eps$prob_vec)
+      while(N_trunc<N_hi_trunc && prob+tol<prob_true){
+        i       = i+1L
+        N_trunc = N_trunc_vec[i]
+        N_eps   = N_eps_vec[i-1L]+eps_speed
+        prob    = self$trans_prob_est(ind_obs, N_trunc = N_trunc, N_eps = N_eps)
         
-        # find preliminary offsets and eps_speed, and init storage
-        dta_adapt     = self$dta_adapt[[ind_obs]]
-        O_trunc       = with(dta_adapt, dta_trunc$N[self$find_offset(dta_trunc, min_mass)])
-        O_eps         = with(dta_adapt, dta_eps$N[self$find_offset(dta_eps, min_mass)])
-        N_hi_trunc    = max(dta_adapt$dta_trunc$N)
-        N_hi_eps      = max(dta_adapt$dta_eps$N)
-        N_trunc_vec   = seq.int(O_trunc,N_hi_trunc)
-        prob_vec      = numeric(length(N_trunc_vec))
-        eps_speed     = max(min_eps_speed,(N_hi_eps-O_eps)/length(N_trunc_vec)) # init at default
-        N_eps_vec     = numeric(length(N_trunc_vec))
-        N_eps_vec[1L] = O_eps
-        prob_vec[1L]  = self$trans_prob_est(ind_obs,N_trunc = O_trunc,N_eps = O_eps)
-        if(self$debug) cat(sprintf(",O_trunc_pre=%d,O_eps_pre=%.1f",O_trunc,O_eps))
-        
-        # explore joint convergence, check monotonicity holds (it must except for unif)
-        i             = 1L
-        N_trunc       = N_trunc_vec[i]
-        N_eps         = O_eps
-        ind_last_doub = 1L
-        prob          = prob_vec[1L]
-        prob_true     = max(dta_adapt$dta_trunc$prob_vec)
-        while(N_trunc<N_hi_trunc && prob+tol<prob_true){
-          i       = i+1L
-          N_trunc = N_trunc_vec[i]
-          N_eps   = N_eps_vec[i-1L]+eps_speed
-          prob    = self$trans_prob_est(ind_obs, N_trunc = N_trunc, N_eps = N_eps)
-          
-          # this loop corrects for the potential non-double-monotonicity of unif
-          # by increasing eps_speed until the joint sequence is increasing
-          while(prob-prob_vec[i-1L]<0 && prob+tol<prob_true){
-            if(self$debug) cat("eps_speed doubled.\n")
-            eps_speed     = 2*eps_speed
-            ind_last_doub = i
-            N_eps         = N_eps_vec[i-1L]+eps_speed
-            prob          = self$trans_prob_est(ind_obs,N_trunc = N_trunc,N_eps = N_eps)
-          }
-          
-          N_eps_vec[i] = N_eps
-          prob_vec[i]  = prob
+        # this loop corrects for the potential non-double-monotonicity of unif
+        # by increasing eps_speed until the joint sequence is increasing
+        while(prob-prob_vec[i-1L]<0 && prob+tol<prob_true){
+          if(self$debug) cat(", eps_speed doubled")
+          eps_speed     = 2*eps_speed
+          ind_last_doub = i
+          N_eps         = N_eps_vec[i-1L]+eps_speed
+          prob          = self$trans_prob_est(ind_obs,N_trunc = N_trunc,N_eps = N_eps)
         }
-        if(self$debug) cat(sprintf(",eps_speed=%.1f",eps_speed))
         
-        # build the joint convergence dataframe
-        # if we doubled after the first loop step, we need to reconstruct prov_vec
-        N_trunc_vec = N_trunc_vec[1L:i]
-        if(ind_last_doub<=2L){
-          N_eps_vec = N_eps_vec[1L:i]
-          prob_vec  = prob_vec[1L:i]
-        }else{                                       # need to reconstruct joint seq
-          N_eps_vec        = seq(O_eps,by=eps_speed,length.out = i)
-          prob_vec_new     = numeric(i)
-          prob_vec_new[1L] = prob_vec[1L]              # at least the origin is correct
-          for(j in seq.int(2L,i)){
-            prob_vec_new[j] = self$trans_prob_est(
-              ind_obs, N_trunc = N_trunc_vec[j], N_eps = N_eps_vec[j]
-            )
-          }
-          prob_vec = prob_vec_new
+        N_eps_vec[i] = N_eps
+        prob_vec[i]  = prob
+      }
+      if(self$debug) cat(sprintf(", eps_speed=%.1f", eps_speed))
+      
+      # build the joint convergence dataframe
+      # if we doubled after the first loop step, we need to reconstruct prov_vec
+      N_trunc_vec = N_trunc_vec[1L:i]
+      if(ind_last_doub <= 2L){
+        N_eps_vec = N_eps_vec[1L:i]
+        prob_vec  = prob_vec[1L:i]
+      }else{                                       # need to reconstruct joint seq
+        N_eps_vec        = seq(O_eps,by=eps_speed,length.out = i)
+        prob_vec_new     = numeric(i)
+        prob_vec_new[1L] = prob_vec[1L]              # at least the origin is correct
+        for(j in seq.int(2L,i)){
+          prob_vec_new[j] = self$trans_prob_est(
+            ind_obs, N_trunc = N_trunc_vec[j], N_eps = N_eps_vec[j]
+          )
         }
-        dta_joint=data.frame(                        # store results
-          N          = N_trunc_vec,
-          N_trunc    = N_trunc_vec, 
-          N_eps      = N_eps_vec,
-          prob_vec   = prob_vec, 
-          cauchy_err = c(NA_real_,diff(prob_vec))
-        )
-        
-        # store results
-        self$dta_adapt[[ind_obs]]$dta_joint = dta_joint
-      } # end ind_obs loop
+        prob_vec = prob_vec_new
+      }
+      dta_joint=data.frame(                        # store results
+        N          = N_trunc_vec,
+        N_trunc    = N_trunc_vec, 
+        N_eps      = N_eps_vec,
+        prob_vec   = prob_vec, 
+        cauchy_err = c(NA_real_,diff(prob_vec))
+      )
+      
+      # store results and return eps_speed
+      self$dta_adapt[[ind_obs]]$dta_joint = dta_joint
+      return(eps_speed)
     },
     
     set_AST = function(
@@ -214,21 +212,23 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
       min_p_geom  = 0.4,
       max_p_geom  = 0.9
       ){
-      
-      # note: joint convergence data is built using a given min_mass so it cannot
-      # be reused. it must be recalculated every time we change min_mass
-      self$study_joint_convergence(min_mass = min_mass)
-      
       for(ind_obs in seq_len(self$n_obs)){
         # ind_obs=5L
         if(self$debug) cat(sprintf("set_AST: obs=%d",ind_obs))
+        
+        # study joint convergence and set eps_speed
+        # note: joint convergence data is built using a given min_mass so it cannot
+        # be reused. it must be recalculated every time we change min_mass
+        eps_speed = self$study_joint_convergence_one_obs(
+          ind_obs = ind_obs, min_mass = min_mass
+        )
     
         # find joint offsets
         dta_joint  = self$dta_adapt[[ind_obs]]$dta_joint
         ind_origin = self$find_offset(dta_joint, min_mass)
         O_trunc    = dta_joint$N_trunc[ind_origin]
         O_eps      = dta_joint$N_eps[ind_origin]
-        if(self$debug) cat(sprintf(",O_trunc=%d,O_eps=%.1f",O_trunc,O_eps))
+        if(self$debug) cat(sprintf(", O_trunc=%d, O_eps=%.1f",O_trunc,O_eps))
         
         # set parameter of geometric stop time by mimicking optimal stopping
         # probability: pmf(n) \propto X_n+1 - X_n
@@ -259,14 +259,14 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
           p_geom=-unname(expm1(-min_slope))#=1-exp(-min_slope)
           p_geom=max(min_p_geom,min(max_p_geom,p_geom)) # enforce safety limits
         }
-        if(self$debug)cat(sprintf(",p_geom=%.1f. done!\n\n",p_geom))
+        if(self$debug)cat(sprintf(", p_geom=%.1f. done!\n\n",p_geom))
 
         # create and store a GeometricST object
         stop_time = GeometricST$new(
           O_trunc   = O_trunc,
           O_eps     = O_eps,
           prob      = p_geom,
-          eps_speed = dta_joint$N_eps[2] - dta_joint$N_eps[1]
+          eps_speed = eps_speed
         )
         self$st_list[[ind_obs]] = stop_time
       } # end ind_obs loop
@@ -467,7 +467,9 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
       floor_cerr=pmin(1E-5*max(cauchy_err),.Machine$double.eps)
       dta_joint$cauchy_err=c(NA_real_,pmax(floor_cerr,cauchy_err))
       
+      # store and return eps_speed
       self$dta_adapt[[1L]]$dta_joint = dta_joint
+      return(eps_speed)
     },
     
     set_AST = function(
@@ -478,7 +480,7 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
     ){
       # note: joint convergence data is built using a given min_mass so it cannot
       # be reused. it must be recalculated every time we change min_mass.
-      self$study_joint_convergence(min_mass = min_mass)
+      eps_speed = self$study_joint_convergence(min_mass = min_mass)
       dta_joint = self$dta_adapt[[1L]]$dta_joint
       
       # find joint offsets
@@ -522,7 +524,7 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
         O_trunc   = O_trunc,
         O_eps     = O_eps,
         prob      = p_geom,
-        eps_speed = dta_joint$N_eps[2] - dta_joint$N_eps[1]
+        eps_speed = eps_speed
       )
       self$st_list[[1L]] = stop_time
     }
