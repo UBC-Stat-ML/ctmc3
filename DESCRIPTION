@@ -3,9 +3,9 @@ Type: Package
 Title: CT(MC)^3: Pseudo-Marginal Markov Chain Monte Carlo for Continuous-Time Markov Chains.
 Version: 0.0.1
 Description: Pseudo-Marginal Markov Chain Monte Carlo for Continuous-Time Markov Chains.
-Imports: pske,R6,limSolve,microbenchmark,coda,mcmcse
+Imports: R6,limSolve,microbenchmark,coda,mcmcse
+Remotes: UBC-Stat-ML/pske
 License: MIT
 Encoding: UTF-8
 RoxygenNote: 7.1.1
 NeedsCompilation: no
-Packaged: 2021-05-26 20:21:41 UTC; mbiron

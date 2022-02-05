@@ -16,10 +16,8 @@ The package [`mcmcse`](https://cran.r-project.org/package=mcmcse) -- used to com
 if (!require(remotes)) {
     install.packages('remotes')
 }
-remotes::install_github(
-    c("UBC-Stat-ML/pske", "UBC-Stat-ML/ctmc3"),
-    auth_token = "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"
-)
+Sys.setenv(GITHUB_PAT = "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")
+remotes::install_github("UBC-Stat-ML/ctmc3")
 ```
 
 
