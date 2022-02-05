@@ -209,7 +209,7 @@ MHSamplerReactNetITSAdaptST = R6::R6Class(
     set_AST = function(
       min_mass    = 0.8,
       slope_alpha = 0.99,
-      min_p_geom  = 0.4,
+      min_p_geom  = 0.1,
       max_p_geom  = 0.9
       ){
       for(ind_obs in seq_len(self$n_obs)){
@@ -475,7 +475,7 @@ MHSamplerReactNetRTSAdaptST = R6::R6Class(
     set_AST = function(
       min_mass      = 0.8,
       slope_alpha   = 0.99,
-      min_p_geom    = 0.4,
+      min_p_geom    = 0.1,
       max_p_geom    = 0.9
     ){
       # note: joint convergence data is built using a given min_mass so it cannot
