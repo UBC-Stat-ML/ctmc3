@@ -19,38 +19,46 @@ MHSamplerReactNet = R6::R6Class(
     update_indices    = NULL, # similar to state_spaces, for each state space we have which reaction (if it exists) gets us from each state to another
     up_csv_hash_table = NULL, # "csv" version of the updates stored as hashed environment (fast lookup)
     varmat            = NULL, # variance of proposal
-    chmat             = NULL, # Cholesky decomposition of proposal
+    chmat             = NULL, # Cholesky decomposition of variance matrix of the proposal
     ss_lbound         = NULL, # absolute lower bound for state spaces
     ss_ubound         = NULL, # absolute upper bound for state spaces
     gtp_solver        = NULL, # solver used by get_trans_prob
     correct_unif      = NULL, # logical: should we correct for non-double-monotonicity in sequential uniformization?
+    st_list           = NULL, # list of adaptive stop-times, one per observation
+    dta_adapt         = NULL, # info about convergence of approx, one per observation
+    theta_to_rrs      = NULL, # function: transform theta to reaction rates (defaults to identity)
     verbose           = NULL, # logical, print stoptime? passed to get_trans_prob
     debug             = NULL, # debug mode?
     initialize = function(exp_name = NULL, dta, CTMC, varmat, gtp_solver = "unif",
+                          theta_to_rrs = function(x){x},
                           ss_lbound, ss_ubound, verbose = FALSE, debug = FALSE, ...){
       super$initialize(...)
-      self$exp_name=exp_name
-      self$dta = dta
-      self$CTMC = CTMC
-      self$n_obs=nrow(self$dta$t) # remember that dta is a list of matrices!
-      self$n_spec=ncol(self$CTMC$updates)
-      self$n_react=nrow(self$CTMC$updates)
-      if(missing(varmat)) varmat=0.1*diag(self$theta_0^2)
+      self$exp_name     = exp_name
+      self$dta          = dta
+      self$CTMC         = CTMC
+      self$n_obs        = nrow(self$dta$t) # remember that dta is a list of matrices!
+      self$n_spec       = ncol(self$CTMC$updates)
+      self$n_react      = nrow(self$CTMC$updates)
+      if(missing(varmat)) 
+        varmat          = 0.1*diag(self$theta_0^2)
       self$set_varmat(varmat)
-      if(missing(ss_lbound)) ss_lbound=rep.int(0L,self$n_spec)
-      self$ss_lbound = ss_lbound
-      if(missing(ss_ubound)) ss_ubound=rep(Inf,self$n_spec)
-      self$ss_ubound=ss_ubound
-      self$verbose=verbose
-      self$debug=debug
+      if(missing(ss_lbound))
+        ss_lbound       = rep.int(0L,self$n_spec)
+      self$ss_lbound    = ss_lbound
+      if(missing(ss_ubound))
+        ss_ubound       = rep(Inf,self$n_spec)
+      self$ss_ubound    = ss_ubound
+      self$theta_to_rrs = theta_to_rrs
+      self$verbose      = verbose
+      self$debug        = debug
       
       # select matrix exponentiation algorithm
-      self$correct_unif = FALSE
+      self$correct_unif   = FALSE
       if(gtp_solver == "correct_unif"){
         self$correct_unif = TRUE
         gtp_solver        = "unif"
       }
-      self$gtp_solver = gtp_solver
+      self$gtp_solver     = gtp_solver
       
       # initialize hash table of updates
       # key: fingerprint of the reaction (csv'd update vector) / value: index of the reaction
@@ -70,8 +78,10 @@ MHSamplerReactNet = R6::R6Class(
     rprop = function(cur){ # multivariate normal
       drop(cur + crossprod(rnorm(self$dim),self$chmat))
     },
+    
     # define logdensity of proposal
-    ldprop = function(cur, prop){ 0 }, # not relevant because symmetric
+    ldprop = function(cur, prop){ 0 }, # irrelevant because prop is symmetric
+    
     # set varmat and its cholesky decomposition from given matrix
     set_varmat = function(varmat){
       self$varmat = varmat
@@ -83,6 +93,7 @@ MHSamplerReactNet = R6::R6Class(
         eig_dec$vectors)
       self$chmat = chol(trunc_varmat)
     },
+    
     # set variance from short parallel run
     set_varmat_from_par_run = function(res_run,n_chains=4L,n_samples=4000L,
                                        varmat_mult=1){
@@ -99,7 +110,7 @@ MHSamplerReactNet = R6::R6Class(
     ######################################################################
     
     # translate between state of the sampler and the underlying CTMC object
-    set_params = function(theta) {self$CTMC$react_rates = theta},
+    set_params = function(theta){self$CTMC$react_rates = self$theta_to_rrs(theta)},
     ldprior    = function(...){stop("not implemented")}, # log-density of prior of theta
     loglik     = function(...){stop("not implemented")}, # log likelihood
     ldtarget   = function(theta){                        # get posterior logdensity
@@ -336,6 +347,8 @@ MHSamplerReactNet = R6::R6Class(
         toc=1E-9*(microbenchmark::get_nanotime()-tic)/60 # minutes
         acc_ratio = 1-res$stats$n_reject/S
         ind=which.max(res$ld_stats[,"target"])
+        # we take min of coda and mcmcse because the latter is overly optimistic
+        # when the chain is sticky (common when sampler has not been tuned properly yet)
         ess = pmin(
           coda::effectiveSize(coda::mcmc(res$theta)),
           mcmcse::ess(res$theta))
@@ -425,281 +438,6 @@ MHSamplerReactNet = R6::R6Class(
       }
       best_pars=cbind(sd_thresh=sd_thresh_vec,best_pars)
       return(best_pars)
-    }
-  )
-)
-
-##############################################################################
-# Fin
-##############################################################################
-
-##############################################################################
-# Metropolis-Hastings sampler for Reaction Network models
-# General case of Irregular Time Series (ITS):
-#   - state_spaces is indexed by observations. 
-#   - each element is a list of states spaces (matrices) of increasing size
-##############################################################################
-
-MHSamplerReactNetITS = R6::R6Class(
-  classname = "MHSamplerReactNetITS",
-  inherit = MHSamplerReactNet,
-  public = list(
-    initialize = function(...){
-      super$initialize(...)
-      if(!self$debug) self$init_state_spaces() # initialize state spaces
-    },
-    
-    ######################################################################
-    # methods for computing likelihoods
-    ######################################################################
-    
-    # get biased but consistent estimate of transition probability for 1 obs
-    trans_prob_est = function(o,N_trunc,N_eps){
-      # o: index of collection of statespaces corresponding to the observation
-      # N_trunc/N_eps: truncation/solver order of approximation
-      if(self$verbose) cat(sprintf("tp-est: o=%d, N_trunc=%d, N_eps=%.1f\n",
-                                   o, N_trunc,N_eps))
-      
-      # check if N_trunc-th state space is available, grow if needed
-      n_spaces = length(self$state_spaces[[o]]) # number of spaces available
-      if((missing_spaces <- N_trunc-(n_spaces-1L))>0L)
-        for(m in seq_len(missing_spaces)) self$grow_state_spaces(o)
-      
-      # get Q matrix at N_trunc-th order of approximation
-      Q_N = self$Q_fun(o, N_trunc)
-      
-      # get positions of the observation in the state space
-      n_N = self$obs_indices[[o]]$s_pre[N_trunc+1L]
-      m_N = self$obs_indices[[o]]$s[N_trunc+1L]
-      
-      # compute probabilities using solver
-      p_N = get_trans_prob(n = n_N, m=m_N, dt=self$dta$dt[o], Q = Q_N, ms = 1L,
-                           eps = 10^(-N_eps), solver=self$gtp_solver,
-                           verbose = self$verbose)
-      return(p_N)
-    },
-    
-    # biased log likelihood
-    loglik_biased = function(theta,N,N_trunc=N,N_eps=N){
-      if(any(theta<0)) return(-Inf) # avoids doing anything when prior is 0
-      self$set_params(theta) # translate theta to model's parameters and set it
-      ll=0
-      for(o in seq_len(self$n_obs)){
-        tp_obs=self$trans_prob_est(o=o,N_trunc=N_trunc,N_eps=N_eps)
-        if(tp_obs==0){ ll=-Inf; break } # stop on first 0
-        ll=ll+log(tp_obs)
-      }
-      return(ll)
-    },
-    
-    # log likelihood
-    loglik = function(theta){
-      if(any(theta<0)) return(-Inf)
-      self$set_params(theta) # translate theta to model's parameters, and set it
-      ll=0
-      for(o in seq_len(self$n_obs)){
-        tp_obs=self$trans_prob_unbiased(o=o)
-        if(tp_obs==0){ ll=-Inf; break } # stop on first 0
-        ll=ll+log(tp_obs)
-      }
-      return(ll)
-    },
-    
-    # get unbiased estimate of transition probability
-    trans_prob_unbiased = function(o){
-      # o: observation index
-      stop_time=self$st_list[[o]]
-      rtime = stop_time$rtime(); N=rtime$N
-      N_trunc=rtime$N_trunc; N_eps=rtime$N_eps; prob = rtime$pmf
-      if(self$verbose) cat(sprintf("tpu: o=%d, N=%d, N_trunc=%d, N_eps=%.1f\n",
-                                   o, N, N_trunc,N_eps))
-      p_N = self$trans_prob_est(o,N_trunc,N_eps)
-      p_N1 = self$trans_prob_est(o,N_trunc+1L,N_eps+stop_time$eps_speed)
-      if(N==0L){
-        p_O=p_N
-      }else{
-        p_O=self$trans_prob_est(o,stop_time$O_trunc,stop_time$O_eps)
-      }
-      Z = max(0,p_O+(p_N1-p_N)/prob) # need to truncate at 0 only because of rounding errors e.g., -0.000000000001
-      return(Z)
-    },
-    
-    ######################################################################
-    # methods for building state spaces
-    ######################################################################
-    
-    # initialize state spaces and associated data structures
-    init_state_spaces = function(){
-      self$set_base_state_spaces_shortest_path() # shortest path state space
-      self$obs_indices=self$update_indices=vector("list",self$n_obs) # reset obs & update indices
-      for(o in seq_len(self$n_obs)){
-        self$populate_obs_index(o)
-        self$populate_update_index(o)
-      } 
-    },
-
-    # grow state space and associated data structures
-    grow_state_spaces = function(o){
-      self$grow_one_state_space_col(o)
-      self$populate_obs_index(o)
-      self$populate_update_index(o)
-    },
-    
-    # find the position of an observation in its most recent statespace
-    populate_obs_index = function(o){
-      n_spaces = length(self$state_spaces[[o]]) # number of spaces available for the obs
-      new_state_space = self$state_spaces[[o]][[n_spaces]]
-      self$obs_indices[[o]]$s_pre[n_spaces] = 
-        self$find_state_in_space(self$dta$s_pre[o,],new_state_space)
-      self$obs_indices[[o]]$s[n_spaces] = 
-        self$find_state_in_space(self$dta$s[o,],new_state_space)
-    }
-  )
-)
-
-##############################################################################
-# fin
-##############################################################################
-
-##############################################################################
-# Metropolis-Hastings sampler for Reaction Network models
-# Special case for Regular Time Series (RTS):
-#   - state_spaces has a unique increasing collection of state spaces
-#   - this collection is used to compute trans-prob for all observations
-##############################################################################
-
-MHSamplerReactNetRTS = R6::R6Class(
-  classname = "MHSamplerReactNetRTS",
-  inherit = MHSamplerReactNet,
-  public = list(
-    initialize = function(dta=dta,...) {
-      vdt = as.numeric(var(dta$dt))
-      if(vdt > .Machine$double.eps)
-        stop("Not a regularly sampled time series.")
-      super$initialize(dta=dta,...)
-      if(!self$debug) self$init_state_spaces() # initialize state spaces
-    },
-    
-    ######################################################################
-    # methods for computing likelihoods
-    ######################################################################
-    
-    # compute (biased) estimate of all transition probabilites
-    get_all_trans_probs_est = function(theta,N_trunc,N_eps){
-      # N_trunc/N_eps: truncation/solver order of approximation
-      if(any(theta<0)) return(-Inf)
-      self$set_params(theta) # translate theta to model's parameters, and set it
-      if(self$verbose) cat(sprintf("loglik-bias: N_trunc=%d, N_eps=%.1f\n",
-                                   N_trunc,N_eps))
-      
-      # check if N_trunc-th state space is available, grow if needed
-      n_spaces = length(self$state_spaces[[1L]])
-      if((missing_spaces<-N_trunc - (n_spaces-1L))>0L)
-        for(m in seq_len(missing_spaces)) self$grow_state_spaces() # grow if needed
-      
-      Q_N = self$Q_fun(1L, N_trunc) # get Q matrix at N_trunc-th order of approximation
-      
-      # get positions of the observation in the state space
-      n_N = self$obs_indices[[N_trunc+1L]]$s_pre
-      m_N = self$obs_indices[[N_trunc+1L]]$s
-      
-      # compute probabilities using solver
-      p_N = get_trans_prob(n = n_N, m=m_N, dt=self$dta$dt[1L],Q = Q_N,ms = 1L,
-                           eps = 10^(-N_eps), solver=self$gtp_solver,
-                           verbose = self$verbose)
-      return(p_N)
-    },
-    
-    # log of (biased) likelihood estimate
-    loglik_biased = function(theta,N_trunc,N_eps){
-      sum(log(self$get_all_trans_probs_est(theta,N_trunc,N_eps)))
-    },
-    
-    # get log of unbiased estimate of likelihood
-    # we de-bias the *product of all terms* without explicitly computing products
-    # Want: log(Z) where Z = prod(p_O)+(prod(pN1)-prod(pN))/pmf(N)
-    # Factorizing:
-    # Z = prod(p_O)[1+(prod(pN1)-prod(pN))/(pmf(N)prod(p_O))]
-    # Define S_n:=sum(log(p_n)). Then
-    # log(Z) = S_O+log1p[(prod(pN1)-prod(pN))/(pmf(N)prod(p_O))]
-    # Also
-    # (prod(pN1)-prod(pN))/(pmf(N)prod(p_O))
-    # = [exp(S_N1)-exp(S_N)]/[pmf(N)exp(S_O)]
-    # = exp(S_N-S_O)[exp(S_N1-S_N)-1]/pmf(N)
-    # = exp(S_N-S_O-log(pmf(N)))expm1(S_N1-S_N) =: w
-    # Finally, log(Z) = S_O + log1p(w)
-    # We need to be able to handle cases where S = -Inf
-    # When pN1 =0 => pO=pN=0 (by monotonicity) => ans = -Inf
-    # If pN1>0 but pO=pN=0, we have Z = pN1/prob => logZ = SN1-log(pmf(N))
-    # If pN1>pN>0 but pO=0, we have Z = (pN1-pN)/prob = (exp(SN1)-exp(SN))/prob
-    # = exp(SN)(exp(SN1-SN)-1)/prob = exp(SN-log(prob))expm1(SN1-SN)
-    # Hence, logZ = SN - log(prob) + log(expm1(SN1-SN))
-    # Note: we use max(0,) to deal with numerical inaccuracies
-    loglik = function(theta){
-      if(any(theta<0)) return(-Inf)
-      self$set_params(theta) # translate theta to model's parameters, and set it
-      stop_time=self$st_list[[1L]]
-      rtime = stop_time$rtime(); N=rtime$N
-      N_trunc=rtime$N_trunc; N_eps=rtime$N_eps; lprob = rtime$lpmf
-      if(self$verbose) cat(sprintf("loglik: N=%d, N_trunc=%d, N_eps=%.1f\n",
-                                   N, N_trunc,N_eps))
-      # note: p_X's are vectors
-      p_N  = self$get_all_trans_probs_est(theta,N_trunc,N_eps)
-      p_N1 = self$get_all_trans_probs_est(theta,N_trunc+1L,N_eps+stop_time$eps_speed)
-      S_N  = sum(log(p_N))
-      S_N1 = sum(log(p_N1))
-      if(is.infinite(S_N1) && S_N1 < 0) return(-Inf)       # means that all 3 are 0 (by domination)
-      if(is.infinite(S_N)  && S_N  < 0) return(S_N1-lprob) # Z= 0 + (pN1-0)/prob = pN1/prob
-      if(N==0L){
-        p_O=p_N;S_O=S_N
-      }else{
-        p_O=self$get_all_trans_probs_est(theta,stop_time$O_trunc,stop_time$O_eps)
-        S_O=sum(log(p_O))
-        if(is.infinite(S_O) && S_O < 0) 
-          return(S_N - lprob + log(expm1(max(0,S_N1-S_N))))
-      }
-      # compute log(Z) when all terms are finite
-      w = exp(max(0, S_N - S_O) - lprob) * expm1(max(0, S_N1 - S_N))
-      logZ = S_O + log1p(w)
-      return(logZ)
-    },
-    
-    ######################################################################
-    # methods for building state spaces
-    ######################################################################
-    
-    # initialize state spaces and associated data structures
-    init_state_spaces = function(){
-      self$set_base_state_spaces_shortest_path() # shortest path state space
-      self$collapse_state_spaces()
-      self$obs_indices=list();self$update_indices=vector("list",1L) # reset obs & update indices
-      self$build_obs_index()
-      self$populate_update_index(1L)
-    },
-    
-    # merges all observations' initial state spaces into an unique state space
-    collapse_state_spaces = function(){
-      collapsed_ss = unique(
-        do.call("rbind",lapply(self$state_spaces, function(l){l[[1L]]})))
-      self$state_spaces=list(list(collapsed_ss))
-    },
-    
-    # find the position of every observation in the state spaces
-    build_obs_index = function(){
-      n_spaces = length(self$state_spaces[[1L]])
-      st_space = self$state_spaces[[1L]][[n_spaces]] # extract collapsed state space
-      obs_ind_s_pre = apply(self$dta$s_pre,1L,function(s){
-        self$find_state_in_space(s,st_space)})
-      obs_ind_s = apply(self$dta$s,1L,function(s){
-        self$find_state_in_space(s,st_space)})
-      self$obs_indices[[n_spaces]] = list(s_pre=obs_ind_s_pre,s=obs_ind_s)
-    },
-    
-    # dispatch a method for growing state spaces
-    grow_state_spaces = function(...){
-      self$grow_one_state_space_col(1L)
-      self$build_obs_index()
-      self$populate_update_index(1L)
     }
   )
 )

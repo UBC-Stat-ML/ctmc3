@@ -107,7 +107,7 @@ load_varmat = function(path_to_varmat,par_names,path_to_alt){
 
 # prior logdensity used by the authors
 GHS2017_LV_ldprior = function(theta){
-  sum(dgamma(x=theta,4,10000,log=TRUE))
+  sum(dgamma(x=theta,4,10000,log=TRUE)) # == -Inf if any(theta<0)
 }
 
 # extend ReactionNetwork to add LV propensities
@@ -126,14 +126,14 @@ ReactionNetworkLV = R6::R6Class(
   )
 )
 # extend to add specific prior
-MHSamplerITSAdaptSTGHS2017LV = R6::R6Class(
-  classname = "MHSamplerITSAdaptSTGHS2017LV",
-  inherit = MHSamplerReactNetITSAdaptST,
+MHSamplerITSGHS2017LV = R6::R6Class(
+  classname = "MHSamplerITSGHS2017LV",
+  inherit = MHSamplerReactNetITS,
   public = list(ldprior = GHS2017_LV_ldprior))
 # extend to add specific prior
-MHSamplerRTSAdaptSTGHS2017LV = R6::R6Class(
-  classname = "MHSamplerRTSAdaptSTGHS2017LV",
-  inherit = MHSamplerReactNetRTSAdaptST,
+MHSamplerRTSGHS2017LV = R6::R6Class(
+  classname = "MHSamplerRTSGHS2017LV",
+  inherit = MHSamplerReactNetRTS,
   public = list(ldprior = GHS2017_LV_ldprior))
 
 # initialize sampler
@@ -152,7 +152,7 @@ get_sampler_GHS2017_LV = function(reg_ts=FALSE,...){
     react_rates  = theta_true)
   dta = load_exp_data(system.file("extdata", "obsPredPreyRT_true", package = "ctmc3"))
   # dta = load_exp_data(file.path(".","data","obsPredPreyRT_true"))
-  sampler_constructor = if(reg_ts) MHSamplerRTSAdaptSTGHS2017LV else MHSamplerITSAdaptSTGHS2017LV
+  sampler_constructor = if(reg_ts) MHSamplerRTSGHS2017LV else MHSamplerITSGHS2017LV
   list_pars=list(CTMC=CTMC,dta=dta,par_names=par_names,
                  theta_true=theta_true)
   return(list(sampler_constructor=sampler_constructor,pars=list_pars))
@@ -177,12 +177,12 @@ ReactionNetworkSIR = R6::R6Class(
   )
 )
 # extend to add specific prior
-MHSamplerITSAdaptSTGHS2017SIR = R6::R6Class(
-  classname = "MHSamplerITSAdaptSTGHS2017SIR",
-  inherit = MHSamplerReactNetITSAdaptST,
+MHSamplerITSGHS2017SIR = R6::R6Class(
+  classname = "MHSamplerITSGHS2017SIR",
+  inherit = MHSamplerReactNetITS,
   public = list(
     # prior logdensity used by the authors
-    ldprior = function(theta){sum(dgamma(x=theta,1.5,5,log=TRUE))}
+    ldprior = function(theta){sum(dgamma(x=theta,1.5,5,log=TRUE))} # == -Inf if any(theta<0)
   )
 )
 
@@ -199,7 +199,7 @@ get_sampler_GHS2017_SIR = function(...){
   dta = load_exp_data(system.file("extdata", "obsSIRinf", package = "ctmc3"))
   # dta = load_exp_data(path_to_data = file.path(".","data","obsSIRinf"))
   list_pars=list(CTMC=CTMC,dta=dta,par_names=par_names,theta_true=theta_true)
-  return(list(sampler_constructor=MHSamplerITSAdaptSTGHS2017SIR,
+  return(list(sampler_constructor=MHSamplerITSGHS2017SIR,
               pars=list_pars))
 }
 
@@ -228,18 +228,18 @@ ReactionNetworkSch = R6::R6Class(
 
 # prior logdensity used by the authors
 # update: changed from normal to lognormal to actually match authors
-SG2019_Sch_ldprior = function(theta) sum(dlnorm(x=theta, log=TRUE))
+SG2019_Sch_ldprior = function(theta) sum(dlnorm(x=theta, log=TRUE)) # == -Inf if any(theta<0)
 
 # extend to add specific prior
-MHSamplerITSAdaptSTSG2019Sch = R6::R6Class(
-  classname = "MHSamplerITSAdaptSTSG2019Sch",
-  inherit = MHSamplerReactNetITSAdaptST,
+MHSamplerITSSG2019Sch = R6::R6Class(
+  classname = "MHSamplerITSSG2019Sch",
+  inherit = MHSamplerReactNetITS,
   public = list(ldprior = SG2019_Sch_ldprior))
 
 # extend to add specific prior
-MHSamplerRTSAdaptSTSG2019Sch = R6::R6Class(
-  classname = "MHSamplerRTSAdaptSTSG2019Sch",
-  inherit = MHSamplerReactNetRTSAdaptST,
+MHSamplerRTSSG2019Sch = R6::R6Class(
+  classname = "MHSamplerRTSSG2019Sch",
+  inherit = MHSamplerReactNetRTS,
   public = list(ldprior = SG2019_Sch_ldprior))
 
 # initialize sampler
@@ -254,7 +254,7 @@ get_sampler_SG2019_Sch = function(reg_ts=FALSE,...){
     react_rates  = theta_true)
   dta = load_exp_data(system.file("extdata", "SG2019_Sch", package = "ctmc3"))
   # dta = load_exp_data(file.path(".","data","SG2019_Sch"))
-  sampler_constructor=if(reg_ts) MHSamplerRTSAdaptSTSG2019Sch else MHSamplerITSAdaptSTSG2019Sch
+  sampler_constructor=if(reg_ts) MHSamplerRTSSG2019Sch else MHSamplerITSSG2019Sch
   list_pars=list(CTMC=CTMC,dta=dta,par_names=par_names,
                  theta_true=theta_true)
   return(list(sampler_constructor=sampler_constructor,pars=list_pars))
@@ -270,6 +270,8 @@ get_sampler_SG2019_Sch = function(reg_ts=FALSE,...){
 #     - moving to the right via (0,1)
 #     - moving up and left via (1,-1)
 # Worst case: need to reach (0,200) and then apply (1,-1) 100 times!!
+# In sum: growing in all directions packs more potential paths of the CTMC
+# compared to using rows of update mat 
 #######################################
 
 # extend ReactionNetwork to add LV (3 reactions) propensities
@@ -294,15 +296,15 @@ SG2019_LV_ldprior = function(theta,ml=log(c(0.2,0.2,0.02))){
 }
 
 # extend to add specific prior
-MHSamplerITSAdaptSTSG2019LV = R6::R6Class(
-  classname = "MHSamplerITSAdaptSTSG2019LV",
-  inherit = MHSamplerReactNetITSAdaptST,
+MHSamplerITSSG2019LV = R6::R6Class(
+  classname = "MHSamplerITSSG2019LV",
+  inherit = MHSamplerReactNetITS,
   public = list(ldprior = SG2019_LV_ldprior))
 
 # extend to add specific prior
-MHSamplerRTSAdaptSTSG2019LV = R6::R6Class(
-  classname = "MHSamplerRTSAdaptSTSG2019LV",
-  inherit = MHSamplerReactNetRTSAdaptST,
+MHSamplerRTSSG2019LV = R6::R6Class(
+  classname = "MHSamplerRTSSG2019LV",
+  inherit = MHSamplerReactNetRTS,
   public = list(ldprior = SG2019_LV_ldprior))
 
 # initialize sampler
@@ -319,7 +321,7 @@ get_sampler_SG2019_LV = function(reg_ts=FALSE,...){
     react_rates  = theta_true)
   dta = load_exp_data(system.file("extdata", "SG2019_LV20", package = "ctmc3"))
   # dta = load_exp_data(file.path(".","data","SG2019_LV20"))
-  sampler_constructor=if(reg_ts) MHSamplerRTSAdaptSTSG2019LV else MHSamplerITSAdaptSTSG2019LV
+  sampler_constructor=if(reg_ts) MHSamplerRTSSG2019LV else MHSamplerITSSG2019LV
   list_pars=list(CTMC=CTMC,dta=dta,par_names=par_names,
                  theta_true=theta_true)
   return(list(sampler_constructor=sampler_constructor,pars=list_pars))
@@ -364,7 +366,7 @@ get_sampler_MMc = function(reg_ts=FALSE,nserv=5L,...){
     react_rates  = theta_true)
   dta = load_exp_data(system.file("extdata", "MMc", package = "ctmc3"))
   # dta = load_exp_data(file.path(".","data","MMc"))
-  sampler_constructor=if(reg_ts) MHSamplerRTSAdaptSTSG2019Sch else MHSamplerITSAdaptSTSG2019Sch
+  sampler_constructor=if(reg_ts) MHSamplerRTSSG2019Sch else MHSamplerITSSG2019Sch
   list_pars=list(CTMC=CTMC,dta=dta,par_names=par_names,
                  theta_true=theta_true)
   return(list(sampler_constructor=sampler_constructor,pars=list_pars))
