@@ -140,23 +140,30 @@ MHSamplerReactNetITS = R6::R6Class(
         # is too poor to admit jumps that involve many intermediate steps
         # Because of the above, a "bump" appears in the profile of the Cauchy error
         # We try to detect being in left tail with heuristics (see below)
-        N_hi_eps=as.integer(-log10(max_err_thresh))
-        N_trunc=0L; old_est=0; cauchy_err=1; dta_trunc=data.frame()
-        prob_vec=numeric() # storage for estimates
+        N_hi_eps   = ceiling(-log10(.Machine$double.eps))
+        N_trunc    = 0L
+        old_est    = 0
+        cauchy_err = 1
+        dta_trunc  = data.frame()
+        prob_vec   = numeric() # storage for estimates
+        
+        # loop
         exploring_left_tail = TRUE # still on the left tail of the bump
         while(exploring_left_tail || cauchy_err>max_err_thresh){
-          new_est = self$trans_prob_est(
-            o=ind_obs,N_trunc = N_trunc,N_eps = N_hi_eps)
-          prob_vec=c(prob_vec,new_est)
+          new_est    = self$trans_prob_est(
+            o = ind_obs, N_trunc = N_trunc, N_eps = N_hi_eps
+          )
+          prob_vec   = c(prob_vec,new_est)
           cauchy_err = new_est-old_est
-          old_est=new_est
-          dta_trunc=rbind(
-            dta_trunc, data.frame(N=N_trunc,cauchy_err=cauchy_err))
+          old_est    = new_est
+          dta_trunc  = rbind(
+            dta_trunc, data.frame(N = N_trunc, cauchy_err = cauchy_err)
+          )
           if(self$debug)cat(sprintf("N_trunc=%d, prob=%g, Cauchy-err=%g\n",
                                     N_trunc,new_est,cauchy_err))
-          N_trunc=N_trunc+1L
+          N_trunc    = N_trunc+1L
           exploring_left_tail=
-            (sum(dta_trunc$cauchy_err<=100*.Machine$double.eps)<=16L && # This controls how long we explore before giving up: <=0 Cauchy err are numerical errors that occur when solver is as exact as possible. If we see "too many" it means there's nothing else to do
+            (sum(dta_trunc$cauchy_err<=100*.Machine$double.eps)<=8L && # This controls how long we explore before giving up: <=0 Cauchy err are numerical errors that occur when solver is as exact as possible. If we see "too many" it means there's nothing else to do
                (diff(range(prob_vec)) < max_err_thresh || # estimated trans-prob is fixed at the first estimate with no improvement
                   all(prob_vec<max_err_thresh))) # all estimated trans-prob are tiny
         }

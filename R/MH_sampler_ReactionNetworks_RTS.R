@@ -150,7 +150,7 @@ MHSamplerReactNetRTS = R6::R6Class(
       cat("\nStudying convergence of the likelihood\n")
 
       # set N_eps high and study truncation Cauchy error
-      N_hi_eps=as.integer(-log10(max_err_thresh))
+      N_hi_eps=ceiling(-log10(.Machine$double.eps))
       N_trunc=0L; old_ll=min_ll_thresh; ll_cauchy_err=1; dta_trunc=data.frame()
       ll_vec=numeric() # storage for estimates
       exploring_left_tail = TRUE # still on the left tail of the bump
