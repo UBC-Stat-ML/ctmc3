@@ -12,7 +12,7 @@ The package [`mcmcse`](https://cran.r-project.org/package=mcmcse) -- used to com
 
 ### Step 2: install `ctmc3`
 
-``` r
+```r
 if (!require(remotes)) {
     install.packages('remotes')
 }
@@ -23,12 +23,12 @@ remotes::install_github("UBC-Stat-ML/ctmc3")
 
 ## Usage example
 
-``` r
+```r
 # build a pre-tuned sampler object for a particular experiment
 sampler = ctmc3::get_sampler(
-  exp_name="SG2019_Sch", # name of the experiment
-  reg_ts=TRUE,           # exploit regularity of time series
-  gtp_solver="skeletoid" # matrix exponential approximation
+  exp_name   = "SG2019_Sch", # name of the experiment
+  reg_ts     = TRUE,         # exploit regularity of time series by using RA method
+  gtp_solver = "skeletoid"   # matrix exponential approximation
 )
 
 # run sampler

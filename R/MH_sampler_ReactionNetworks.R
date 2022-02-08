@@ -1,7 +1,10 @@
 ##############################################################################
 # Metropolis-Hastings sampler for Reaction Network models
-# Base class that mainly implements methods for the proposal distribution,
-# for managing collections of statespaces, and for building rate matrices
+# Base class that implements methods dealing with
+# - proposal
+# - managing collections of statespaces
+# - building rate matrices
+# - tuning samplers
 ##############################################################################
 
 MHSamplerReactNet = R6::R6Class(

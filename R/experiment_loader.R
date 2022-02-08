@@ -26,12 +26,14 @@ get_sampler = function(
     SG2019_LV20 = get_sampler_SG2019_LV,
     SG2019_Sch  = get_sampler_SG2019_Sch,
     MMc         = get_sampler_MMc,
+    SG2019_Sch_log = get_sampler_SG2019_Sch_log,
+    SG2019_LV20_log  = get_sampler_SG2019_LV_log,
     stop("Unknown experiment."))
-  res_list = do.call(caller,list(reg_ts=reg_ts))             # get the sampler constructor for the experiment
+  res_list = do.call(caller,list(reg_ts=reg_ts)) # get sampler constructor + experiment parameters
   
   # compile list of arguments to pass to the constructor
   alist=c(list(exp_name=exp_name,gtp_solver=gtp_solver),res_list$pars,list(...))
-  if(!missing(tuned_pars_path) || tuned_pars){               # use stored parameters
+  if(!missing(tuned_pars_path) || tuned_pars){                   # use stored parameters
     model_string = paste0(
       sprintf("%s_%s%s",exp_name,ifelse(reg_ts,"reg_ts_",""), gtp_solver)
     )
@@ -43,7 +45,6 @@ get_sampler = function(
     model_pars     = file.path(tuned_pars_path, model_string)
     path_to_varmat = file.path(model_pars, "varmat.txt")
     path_to_theta0 = file.path(model_pars, "theta_0.txt")
-    # path_to_tunres = file.path(model_pars, "tuning_results.txt")
     path_to_st_dta = file.path(model_pars, "st_dta.txt")
     
     # load parameters
@@ -53,17 +54,14 @@ get_sampler = function(
     )
     alist$theta_0        = scan(path_to_theta0, quiet = TRUE)
     names(alist$theta_0) = alist$par_names
-    # min_mass             = scan(path_to_tunres, quiet=TRUE)[2L]
     st_dta               = read.table(path_to_st_dta, header = TRUE)
     
     # build sampler and set stopping times
     sampler = do.call("new", alist, envir = res_list$sampler_constructor)
     sampler$st_list = lapply(
       seq_len(nrow(st_dta)),
-      function(i){ do.call(GeometricST$new, st_dta[i,]) }
+      function(i){ do.call(GeometricST$new, st_dta[i,]) } # note we use here a dataframe row as list
     )
-    # sampler$study_convergence()
-    # sampler$set_AST(min_mass=min_mass)
   }else{
     alist$theta_0 = if(use_theta_true) alist$theta_true else get_rnd_theta(alist$theta_true)
     sampler       = do.call("new", alist, envir = res_list$sampler_constructor)
@@ -227,23 +225,29 @@ ReactionNetworkSch = R6::R6Class(
 )
 
 # prior logdensity used by the authors
-# update: changed from normal to lognormal to actually match authors
-SG2019_Sch_ldprior = function(theta) sum(dlnorm(x=theta, log=TRUE)) # == -Inf if any(theta<0)
+SG2019_Sch_ldprior = function(theta) sum(dlnorm(x=theta, log=TRUE))    # == -Inf if any(theta<0)
+SG2019_Sch_log_ldprior = function(theta) sum(dnorm(x=theta, log=TRUE)) # work in log space
 
-# extend to add specific prior
+# extend classes to add specific prior
 MHSamplerITSSG2019Sch = R6::R6Class(
   classname = "MHSamplerITSSG2019Sch",
   inherit = MHSamplerReactNetITS,
   public = list(ldprior = SG2019_Sch_ldprior))
-
-# extend to add specific prior
 MHSamplerRTSSG2019Sch = R6::R6Class(
   classname = "MHSamplerRTSSG2019Sch",
   inherit = MHSamplerReactNetRTS,
   public = list(ldprior = SG2019_Sch_ldprior))
+MHSamplerITSSG2019SchLog = R6::R6Class(
+  classname = "MHSamplerITSSG2019SchLog",
+  inherit = MHSamplerReactNetITS,
+  public = list(ldprior = SG2019_Sch_log_ldprior))
+MHSamplerRTSSG2019SchLog = R6::R6Class(
+  classname = "MHSamplerRTSSG2019SchLog",
+  inherit = MHSamplerReactNetRTS,
+  public = list(ldprior = SG2019_Sch_log_ldprior))
 
 # initialize sampler
-get_sampler_SG2019_Sch = function(reg_ts=FALSE,...){
+get_sampler_SG2019_Sch = function(reg_ts = FALSE, use_log = FALSE, ...){
   # species: X only, birth-death version of the model (collapsed)
   # like Vellela & Qian (2009), Eqs 2.6,2.7, but with functional forms in Example 2 SG2019
   updates = matrix(c(-1L,1L), nrow=2L, ncol=1L)
@@ -254,11 +258,19 @@ get_sampler_SG2019_Sch = function(reg_ts=FALSE,...){
     react_rates  = theta_true)
   dta = load_exp_data(system.file("extdata", "SG2019_Sch", package = "ctmc3"))
   # dta = load_exp_data(file.path(".","data","SG2019_Sch"))
-  sampler_constructor=if(reg_ts) MHSamplerRTSSG2019Sch else MHSamplerITSSG2019Sch
-  list_pars=list(CTMC=CTMC,dta=dta,par_names=par_names,
-                 theta_true=theta_true)
+  sampler_constructor=if(reg_ts){
+    if(use_log) MHSamplerRTSSG2019SchLog else MHSamplerRTSSG2019Sch
+  }else{
+    if(use_log) MHSamplerITSSG2019SchLog else MHSamplerITSSG2019Sch
+  }
+  list_pars=list(
+    CTMC=CTMC,dta=dta,par_names=par_names,
+    theta_true=if(use_log) log(theta_true) else theta_true,
+    theta_to_rrs=if(use_log) function(x){exp(x)} else function(x){x}
+  )
   return(list(sampler_constructor=sampler_constructor,pars=list_pars))
 }
+get_sampler_SG2019_Sch_log = function(...) get_sampler_SG2019_Sch(use_log = TRUE, ...)
 
 #######################################
 # LV20
@@ -290,9 +302,11 @@ ReactionNetworkLV3R = R6::R6Class(
 )
 
 # prior logdensity used by the authors
-# update: changed from normal to lognormal to actually match authors
-SG2019_LV_ldprior = function(theta,ml=log(c(0.2,0.2,0.02))){
+SG2019_LV_ldprior = function(theta, ml=log(c(0.2,0.2,0.02))){
   sum(dlnorm(x=theta, meanlog = ml, log=TRUE))
+}
+SG2019_LV_log_ldprior = function(theta, m = c(0.2,0.2,0.02)){
+  sum(dnorm(x=theta, mean = m, log=TRUE))
 }
 
 # extend to add specific prior
@@ -300,15 +314,21 @@ MHSamplerITSSG2019LV = R6::R6Class(
   classname = "MHSamplerITSSG2019LV",
   inherit = MHSamplerReactNetITS,
   public = list(ldprior = SG2019_LV_ldprior))
-
-# extend to add specific prior
 MHSamplerRTSSG2019LV = R6::R6Class(
   classname = "MHSamplerRTSSG2019LV",
   inherit = MHSamplerReactNetRTS,
   public = list(ldprior = SG2019_LV_ldprior))
+MHSamplerITSSG2019LVLog = R6::R6Class(
+  classname = "MHSamplerITSSG2019LVLog",
+  inherit = MHSamplerReactNetITS,
+  public = list(ldprior = SG2019_LV_log_ldprior))
+MHSamplerRTSSG2019LVLog = R6::R6Class(
+  classname = "MHSamplerRTSSG2019LVLog",
+  inherit = MHSamplerReactNetRTS,
+  public = list(ldprior = SG2019_LV_log_ldprior))
 
 # initialize sampler
-get_sampler_SG2019_LV = function(reg_ts=FALSE,...){
+get_sampler_SG2019_LV = function(reg_ts = FALSE, use_log = FALSE, ...){
   # Lotka-Volterra with 3 reactions [predator:col1 - prey:col2]
   updates = matrix(as.integer(c(-1, 0,  # death of predator
                                  0, 1,  # birth of prey
@@ -321,12 +341,20 @@ get_sampler_SG2019_LV = function(reg_ts=FALSE,...){
     react_rates  = theta_true)
   dta = load_exp_data(system.file("extdata", "SG2019_LV20", package = "ctmc3"))
   # dta = load_exp_data(file.path(".","data","SG2019_LV20"))
-  sampler_constructor=if(reg_ts) MHSamplerRTSSG2019LV else MHSamplerITSSG2019LV
-  list_pars=list(CTMC=CTMC,dta=dta,par_names=par_names,
-                 theta_true=theta_true)
+  sampler_constructor=if(reg_ts){
+    if(use_log) MHSamplerRTSSG2019LVLog else MHSamplerRTSSG2019LV 
+  }else{
+    if(use_log) MHSamplerITSSG2019LVLog else MHSamplerITSSG2019LV
+  }
+  list_pars=list(
+    CTMC=CTMC,dta=dta,par_names=par_names,
+    theta_true=if(use_log) log(theta_true) else theta_true,
+    theta_to_rrs=if(use_log) function(x){exp(x)} else function(x){x}
+  )
   return(list(sampler_constructor=sampler_constructor,pars=list_pars))
 }
-
+get_sampler_SG2019_LV_log = function(...) get_sampler_SG2019_LV(use_log = TRUE, ...)
+                                                                
 ##############################################################################
 # other models not used in experiments
 ##############################################################################
