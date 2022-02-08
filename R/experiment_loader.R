@@ -64,6 +64,7 @@ get_sampler = function(
     )
   }else{
     alist$theta_0 = if(use_theta_true) alist$theta_true else get_rnd_theta(alist$theta_true)
+    alist$varmat  = diag(ifelse(grepl("_log$", exp_name),0.01,0.1)*alist$theta_0^2)
     sampler       = do.call("new", alist, envir = res_list$sampler_constructor)
   }
   return(sampler)

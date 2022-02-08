@@ -42,8 +42,8 @@ MHSamplerReactNet = R6::R6Class(
       self$n_obs        = nrow(self$dta$t) # remember that dta is a list of matrices!
       self$n_spec       = ncol(self$CTMC$updates)
       self$n_react      = nrow(self$CTMC$updates)
-      if(missing(varmat)) 
-        varmat          = 0.1*diag(self$theta_0^2)
+      # if(missing(varmat)) 
+      #   varmat          = 0.1*diag(self$theta_0^2)
       self$set_varmat(varmat)
       if(missing(ss_lbound))
         ss_lbound       = rep.int(0L,self$n_spec)
