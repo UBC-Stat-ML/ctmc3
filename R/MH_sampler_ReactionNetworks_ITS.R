@@ -156,7 +156,7 @@ MHSamplerReactNetITS = R6::R6Class(
                                     N_trunc,new_est,cauchy_err))
           N_trunc=N_trunc+1L
           exploring_left_tail=
-            (sum(dta_trunc$cauchy_err<=100*.Machine$double.eps)<=8L && # This controls how long we explore before giving up: <=0 Cauchy err are numerical errors that occur when solver is as exact as possible. If we see "too many" it means there's nothing else to do
+            (sum(dta_trunc$cauchy_err<=100*.Machine$double.eps)<=16L && # This controls how long we explore before giving up: <=0 Cauchy err are numerical errors that occur when solver is as exact as possible. If we see "too many" it means there's nothing else to do
                (diff(range(prob_vec)) < max_err_thresh || # estimated trans-prob is fixed at the first estimate with no improvement
                   all(prob_vec<max_err_thresh))) # all estimated trans-prob are tiny
         }
