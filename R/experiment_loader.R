@@ -303,10 +303,10 @@ ReactionNetworkLV3R = R6::R6Class(
 )
 
 # prior logdensity used by the authors
-SG2019_LV_ldprior = function(theta, ml=log(c(0.2,0.2,0.02))){
+SG2019_LV_ldprior = function(theta, ml = log(c(0.2,0.2,0.02))){
   sum(dlnorm(x=theta, meanlog = ml, log=TRUE))
 }
-SG2019_LV_log_ldprior = function(theta, m = c(0.2,0.2,0.02)){
+SG2019_LV_log_ldprior = function(theta, m = log(c(0.2,0.2,0.02))){
   sum(dnorm(x=theta, mean = m, log=TRUE))
 }
 
