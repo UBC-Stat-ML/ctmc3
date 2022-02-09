@@ -162,10 +162,12 @@ MHSamplerReactNetITS = R6::R6Class(
           if(self$debug)cat(sprintf("N_trunc=%d, prob=%g, Cauchy-err=%g\n",
                                     N_trunc,new_est,cauchy_err))
           N_trunc    = N_trunc+1L
+          
+          # check if we are still left of the peak
           exploring_left_tail=
-            (sum(dta_trunc$cauchy_err<=100*.Machine$double.eps)<=8L && # This controls how long we explore before giving up: <=0 Cauchy err are numerical errors that occur when solver is as exact as possible. If we see "too many" it means there's nothing else to do
-               (diff(range(prob_vec)) < max_err_thresh || # estimated trans-prob is fixed at the first estimate with no improvement
-                  all(prob_vec<max_err_thresh))) # all estimated trans-prob are tiny
+            (sum(dta_trunc$cauchy_err<=100*.Machine$double.eps)<=12L && # This is a budget constraint, it sets how long we explore before giving up: if we see "too many" ~0 values, it means there's nothing else to do
+               (diff(range(prob_vec)) < max_err_thresh ||               # criterion 1: estimated trans-prob is fixed at the first estimate with no improvement
+                  all(prob_vec<max_err_thresh)))                        # criterion 2: all estimated trans-prob are tiny
         }
         N_hi_trunc = N_trunc-1L # this truncation level gives Cauchy err < max_err_thresh
         best_guess = max(prob_vec)
