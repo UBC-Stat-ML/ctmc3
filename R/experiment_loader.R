@@ -26,8 +26,9 @@ get_sampler = function(
     SG2019_LV20 = get_sampler_SG2019_LV,
     SG2019_Sch  = get_sampler_SG2019_Sch,
     MMc         = get_sampler_MMc,
-    SG2019_Sch_log = get_sampler_SG2019_Sch_log,
-    SG2019_LV20_log  = get_sampler_SG2019_LV_log,
+    SG2019_Sch_log  = get_sampler_SG2019_Sch_log,
+    SG2019_LV20_log = get_sampler_SG2019_LV_log,
+    GHS2017_LV_log  = get_sampler_GHS2017_LV_log,
     stop("Unknown experiment."))
   res_list = do.call(caller,list(reg_ts=reg_ts)) # get sampler constructor + experiment parameters
   
@@ -104,11 +105,6 @@ load_varmat = function(path_to_varmat,par_names,path_to_alt){
 # Lotka-Volterra
 #######################################
 
-# prior logdensity used by the authors
-GHS2017_LV_ldprior = function(theta){
-  sum(dgamma(x=theta,4,10000,log=TRUE)) # == -Inf if any(theta<0)
-}
-
 # extend ReactionNetwork to add LV propensities
 ReactionNetworkLV = R6::R6Class(
   classname = "ReactionNetworkLV",
@@ -124,19 +120,39 @@ ReactionNetworkLV = R6::R6Class(
     }
   )
 )
+
+# prior logdensity used by the authors
+GHS2017_LV_ldprior = function(theta){
+  sum(dgamma(x = theta, 4, 10000, log = TRUE)) # == -Inf if any(theta<0)
+}
+# normal approximation to the log scale prior (used for comparison to SG19)
+# use simple moment matching, by leveraging that for G ~ Gamma(a,b), then
+# - E[log(G)]   = digamma(a) - log(b)
+# - Var[log(G)] = trigamma(a)
+GHS2017_LV_log_ldprior = function(theta,m=digamma(4)-log(10000),s=sqrt(trigamma(4))){
+  sum(dnorm(x = theta, mean = m, sd = s, log = TRUE))
+}
+
 # extend to add specific prior
 MHSamplerITSGHS2017LV = R6::R6Class(
   classname = "MHSamplerITSGHS2017LV",
   inherit = MHSamplerReactNetITS,
   public = list(ldprior = GHS2017_LV_ldprior))
-# extend to add specific prior
 MHSamplerRTSGHS2017LV = R6::R6Class(
   classname = "MHSamplerRTSGHS2017LV",
   inherit = MHSamplerReactNetRTS,
   public = list(ldprior = GHS2017_LV_ldprior))
+MHSamplerITSGHS2017LVLog = R6::R6Class(
+  classname = "MHSamplerITSGHS2017LVLog",
+  inherit = MHSamplerReactNetITS,
+  public = list(ldprior = GHS2017_LV_log_ldprior))
+MHSamplerRTSGHS2017LVLog = R6::R6Class(
+  classname = "MHSamplerRTSGHS2017LVLog",
+  inherit = MHSamplerReactNetRTS,
+  public = list(ldprior = GHS2017_LV_log_ldprior))
 
 # initialize sampler
-get_sampler_GHS2017_LV = function(reg_ts=FALSE,...){
+get_sampler_GHS2017_LV = function(reg_ts=FALSE,use_log=FALSE,...){
   # define CTMC model: Lotka-Volterra [predator(col1)-prey(col2)]
   updates = matrix(as.integer(c( 1, 0,
                                 -1, 0,
@@ -150,12 +166,19 @@ get_sampler_GHS2017_LV = function(reg_ts=FALSE,...){
     updates      = updates,
     react_rates  = theta_true)
   dta = load_exp_data(system.file("extdata", "obsPredPreyRT_true", package = "ctmc3"))
-  # dta = load_exp_data(file.path(".","data","obsPredPreyRT_true"))
-  sampler_constructor = if(reg_ts) MHSamplerRTSGHS2017LV else MHSamplerITSGHS2017LV
-  list_pars=list(CTMC=CTMC,dta=dta,par_names=par_names,
-                 theta_true=theta_true)
+  sampler_constructor = if(reg_ts){
+    if(use_log) MHSamplerRTSGHS2017LVLog else MHSamplerRTSGHS2017LV 
+  }else{
+    if(use_log) MHSamplerITSGHS2017LVLog else MHSamplerITSGHS2017LV
+  }
+  list_pars=list(
+    CTMC=CTMC,dta=dta,par_names=par_names,
+    theta_true=if(use_log) log(theta_true) else theta_true,
+    theta_to_rrs=if(use_log) function(x){exp(x)} else function(x){x}
+  )
   return(list(sampler_constructor=sampler_constructor,pars=list_pars))
 }
+get_sampler_GHS2017_LV_log = function(...) get_sampler_GHS2017_LV(use_log = TRUE, ...)
 
 #######################################
 # SIR
@@ -196,7 +219,6 @@ get_sampler_GHS2017_SIR = function(...){
     updates      = updates,
     react_rates  = theta_true)
   dta = load_exp_data(system.file("extdata", "obsSIRinf", package = "ctmc3"))
-  # dta = load_exp_data(path_to_data = file.path(".","data","obsSIRinf"))
   list_pars=list(CTMC=CTMC,dta=dta,par_names=par_names,theta_true=theta_true)
   return(list(sampler_constructor=MHSamplerITSGHS2017SIR,
               pars=list_pars))
@@ -258,7 +280,6 @@ get_sampler_SG2019_Sch = function(reg_ts = FALSE, use_log = FALSE, ...){
     updates      = updates,
     react_rates  = theta_true)
   dta = load_exp_data(system.file("extdata", "SG2019_Sch", package = "ctmc3"))
-  # dta = load_exp_data(file.path(".","data","SG2019_Sch"))
   sampler_constructor=if(reg_ts){
     if(use_log) MHSamplerRTSSG2019SchLog else MHSamplerRTSSG2019Sch
   }else{
@@ -275,16 +296,6 @@ get_sampler_SG2019_Sch_log = function(...) get_sampler_SG2019_Sch(use_log = TRUE
 
 #######################################
 # LV20
-# Note: 1 reason why using directions = rows of update matrix doesn't work well here is that in this
-# version of LV the only way to expand in both (pred,prey) directions is via
-# combinations of 3rd and 2nd reactions. This is much slower than applying the
-# 2 independent reactions for "birth" that the LV model above has
-# Graphically: you want to reach (100,100) but can only do so by 2 moves:
-#     - moving to the right via (0,1)
-#     - moving up and left via (1,-1)
-# Worst case: need to reach (0,200) and then apply (1,-1) 100 times!!
-# In sum: growing in all directions packs more potential paths of the CTMC
-# compared to using rows of update mat 
 #######################################
 
 # extend ReactionNetwork to add LV (3 reactions) propensities
@@ -341,7 +352,6 @@ get_sampler_SG2019_LV = function(reg_ts = FALSE, use_log = FALSE, ...){
     updates      = updates,
     react_rates  = theta_true)
   dta = load_exp_data(system.file("extdata", "SG2019_LV20", package = "ctmc3"))
-  # dta = load_exp_data(file.path(".","data","SG2019_LV20"))
   sampler_constructor=if(reg_ts){
     if(use_log) MHSamplerRTSSG2019LVLog else MHSamplerRTSSG2019LV 
   }else{
@@ -394,7 +404,6 @@ get_sampler_MMc = function(reg_ts=FALSE,nserv=5L,...){
     updates      = updates,
     react_rates  = theta_true)
   dta = load_exp_data(system.file("extdata", "MMc", package = "ctmc3"))
-  # dta = load_exp_data(file.path(".","data","MMc"))
   sampler_constructor=if(reg_ts) MHSamplerRTSSG2019Sch else MHSamplerITSSG2019Sch
   list_pars=list(CTMC=CTMC,dta=dta,par_names=par_names,
                  theta_true=theta_true)
