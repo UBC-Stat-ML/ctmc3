@@ -1,0 +1,2 @@
+"O_trunc" "O_eps" "eps_speed" "prob"
+17 22 20 0.560018601316997

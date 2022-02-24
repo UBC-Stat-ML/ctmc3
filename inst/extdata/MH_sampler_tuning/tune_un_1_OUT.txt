@@ -1,0 +1,180 @@
+
+Experiment: GHS2017_LV_log	Type of sampler: RA	MatExpAlgo: correct_unif
+
+Analyzing truncation and approx. solver asymptotics, and tuning stopping times
+
+Studying convergence of the likelihood
+N_trunc=0, ll=-96.7466, ll_Cauchy-err=603.253
+N_trunc=1, ll=-60.5827, ll_Cauchy-err=36.1639
+N_trunc=2, ll=-57.1271, ll_Cauchy-err=3.45567
+N_trunc=3, ll=-56.5669, ll_Cauchy-err=0.560214
+N_trunc=4, ll=-56.4778, ll_Cauchy-err=0.0890355
+N_trunc=5, ll=-56.472, ll_Cauchy-err=0.00583254
+N_trunc=6, ll=-56.4718, ll_Cauchy-err=0.000210192
+N_trunc=7, ll=-56.4718, ll_Cauchy-err=6.57993e-06
+N_trunc=8, ll=-56.4718, ll_Cauchy-err=3.04938e-07
+N_trunc=9, ll=-56.4718, ll_Cauchy-err=1.68609e-08
+N_trunc=10, ll=-56.4718, ll_Cauchy-err=9.2566e-10
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 1610550 86.1    2605528 139.2  2605528 139.2
+Vcells 2802527 21.4    8388608  64.0  8314183  63.5
+(Spent 0.1 minutes on this task)
+
+Info about tuned stop-times:
+O_trunc:
+[1] 4
+O_eps:
+[1] 22
+prob:
+[1] 0.9
+eps_speed:
+[1] 20
+
+Growing spaces first for smoother sampling and more faithful timings
+(Spent 0.0 minutes on this task)
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 1633425 87.3    2605528 139.2  2605528 139.2
+Vcells 2846501 21.8    8388608  64.0  8314183  63.5
+
+Short run of 2500 samples per chain to get better estimates of mode and variance under posterior
+(Spent 3.0 minutes on this task)
+Estimate of mode with target=-63.269397 found at:
+Birth of predator Death of predator     Birth of prey     Death of prey 
+        -9.197578         -7.673361         -7.741157         -9.097520 
+
+Analyzing truncation and approx. solver asymptotics at new theta_0
+
+Studying convergence of the likelihood
+N_trunc=0, ll=-96.5153, ll_Cauchy-err=603.485
+N_trunc=1, ll=-60.8969, ll_Cauchy-err=35.6184
+N_trunc=2, ll=-57.5136, ll_Cauchy-err=3.38336
+N_trunc=3, ll=-56.9615, ll_Cauchy-err=0.552112
+N_trunc=4, ll=-56.8736, ll_Cauchy-err=0.0878323
+N_trunc=5, ll=-56.868, ll_Cauchy-err=0.00563298
+N_trunc=6, ll=-56.8678, ll_Cauchy-err=0.00018896
+N_trunc=7, ll=-56.8678, ll_Cauchy-err=4.94535e-06
+N_trunc=8, ll=-56.8678, ll_Cauchy-err=1.96772e-07
+N_trunc=9, ll=-56.8678, ll_Cauchy-err=1.01164e-08
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 1639588 87.6    2605528 139.2  2605528 139.2
+Vcells 2928563 22.4    8388608  64.0  8314183  63.5
+(Spent 0.0 minutes on this task)
+
+We'll be searching these parameters
+List of 3
+ $ sd_thresh_vec  : num [1:5] 0.1 0.5 1 1.5 2
+ $ varmat_mult_vec: num [1:8] 0.5 0.857 1.214 1.571 1.929 ...
+ $ min_mass_vec   : num [1:8] 0 0.01 0.1 0.2 0.4 0.6 0.8 0.9
+
+Estimating sd(loglik) for every configuration.
+(Spent 0.4 minutes on this task)
+
+Estimated sd(loglik) for each config:
+  min_mass   sd_loglik time_per_loglik
+1     0.00 0.857767944      0.03521221
+2     0.01 0.150932782      0.04726110
+3     0.10 0.053938613      0.04756540
+4     0.20 0.063438820      0.04703538
+5     0.40 0.142444166      0.04647562
+6     0.60 0.041646516      0.06019822
+7     0.80 0.041646516      0.05940618
+8     0.90 0.002028392      0.07286911
+
+Best configuration for every threshold on sd(loglik)
+   sd_thresh min_mass  sd_loglik time_per_loglik
+4        0.1      0.2 0.06343882      0.04703538
+5        0.5      0.4 0.14244417      0.04647562
+1        1.0      0.0 0.85776794      0.03521221
+11       1.5      0.0 0.85776794      0.03521221
+12       2.0      0.0 0.85776794      0.03521221
+After removing thresholds with duplicated configurations, we get
+  sd_thresh min_mass  sd_loglik time_per_loglik
+4       0.1      0.2 0.06343882      0.04703538
+5       0.5      0.4 0.14244417      0.04647562
+1       1.0      0.0 0.85776794      0.03521221
+
+Tuning stop times to the best config found for sd(loglik)<=1.0e-01.
+
+Info about tuned stop-times:
+O_trunc:
+[1] 2
+O_eps:
+[1] 1
+prob:
+[1] 0.9
+eps_speed:
+[1] 20
+
+Running all chains using this configuration to estimate ess/min.
+Total sampling time: 7.4 minutes
+
+Average ESS/min: 81.09
+
+Tuning stop times to the best config found for sd(loglik)<=5.0e-01.
+
+Info about tuned stop-times:
+O_trunc:
+[1] 2
+O_eps:
+[1] 2
+prob:
+[1] 0.9
+eps_speed:
+[1] 20
+
+Running all chains using this configuration to estimate ess/min.
+Total sampling time: 7.4 minutes
+
+Average ESS/min: 79.11
+
+Tuning stop times to the best config found for sd(loglik)<=1.0e+00.
+
+Info about tuned stop-times:
+O_trunc:
+[1] 1
+O_eps:
+[1] 1
+prob:
+[1] 0.8833763
+eps_speed:
+[1] 20
+
+Running all chains using this configuration to estimate ess/min.
+Total sampling time: 5.5 minutes
+
+Average ESS/min: 76.19
+
+Finished! Summary of ESS/min:
+  sd_thresh min_mass  sd_loglik time_per_loglik varmat_mult total_sampling_time
+1       0.1      0.2 0.06343882      0.04703538           1            7.362042
+2       0.5      0.4 0.14244417      0.04647562           1            7.449937
+3       1.0      0.0 0.85776794      0.03521221           1            5.474910
+  ess_mean ess_per_min
+1 596.9811    81.08906
+2 589.3905    79.11350
+3 417.1241    76.18830
+
+Setting sampler to the best configuration found
+  sd_thresh min_mass  sd_loglik time_per_loglik varmat_mult total_sampling_time
+1       0.1      0.2 0.06343882      0.04703538           1            7.362042
+  ess_mean ess_per_min
+1 596.9811    81.08906
+
+Short run of 2500 samples per chain to get better estimates of mode and variance under posterior
+(Spent 1.9 minutes on this task)
+Estimate of mode with target=-63.038013 found at:
+Birth of predator Death of predator     Birth of prey     Death of prey 
+        -9.218244         -7.701747         -7.465844         -9.038773 
+Selected the following configuration:
+  varmat_mult acc_ratio    target mean_ess ess_per_min
+3    1.214286    0.3229 -63.12036 693.9422      92.431
+(Spent 15.1 minutes on this task)
+
+
+Tuning variance multiplier finished. Summary:
+  sd_thresh min_mass  sd_loglik time_per_loglik varmat_mult acc_ratio    target
+1       0.1      0.2 0.06343882      0.04703538    1.214286    0.3229 -63.12036
+  mean_ess ess_per_min
+1 693.9422      92.431
+
+Storing results.

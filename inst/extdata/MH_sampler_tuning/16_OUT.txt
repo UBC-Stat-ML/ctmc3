@@ -1,0 +1,595 @@
+
+Experiment: GHS2017_SIR	Type of sampler: IA	MatExpAlgo: correct_unif
+
+Analyzing truncation and approx. solver asymptotics, and tuning stopping times
+
+Studying convergence for obs 1
+N_trunc=0, prob=0.0743891, Cauchy-err=0.0743891
+N_trunc=1, prob=0.0743891, Cauchy-err=-5.55112e-17
+N_trunc=2, prob=0.0743891, Cauchy-err=0
+N_trunc=3, prob=0.0743891, Cauchy-err=0
+N_trunc=4, prob=0.0743891, Cauchy-err=0
+N_trunc=5, prob=0.0743891, Cauchy-err=2.77556e-17
+N_trunc=6, prob=0.0743891, Cauchy-err=0
+N_trunc=7, prob=0.0743891, Cauchy-err=-2.77556e-17
+N_trunc=8, prob=0.0743891, Cauchy-err=0
+N_trunc=9, prob=0.0743891, Cauchy-err=0
+
+Studying convergence for obs 2
+N_trunc=0, prob=0.0255577, Cauchy-err=0.0255577
+N_trunc=1, prob=0.0255577, Cauchy-err=1.73472e-17
+N_trunc=2, prob=0.0753286, Cauchy-err=0.0497709
+N_trunc=3, prob=0.0753286, Cauchy-err=2.77556e-17
+
+Studying convergence for obs 3
+N_trunc=0, prob=0.000632089, Cauchy-err=0.000632089
+N_trunc=1, prob=0.00318197, Cauchy-err=0.00254988
+N_trunc=2, prob=0.00349824, Cauchy-err=0.000316276
+N_trunc=3, prob=0.00349824, Cauchy-err=3.90313e-18
+
+Studying convergence for obs 4
+N_trunc=0, prob=0.00289139, Cauchy-err=0.00289139
+N_trunc=1, prob=0.0219947, Cauchy-err=0.0191034
+N_trunc=2, prob=0.0219947, Cauchy-err=-3.46945e-18
+
+Studying convergence for obs 5
+N_trunc=0, prob=0.0022904, Cauchy-err=0.0022904
+N_trunc=1, prob=0.00330732, Cauchy-err=0.00101691
+N_trunc=2, prob=0.00330732, Cauchy-err=-2.60209e-18
+
+Studying convergence for obs 6
+N_trunc=0, prob=0.0422122, Cauchy-err=0.0422122
+N_trunc=1, prob=0.0422122, Cauchy-err=2.08167e-17
+N_trunc=2, prob=0.101345, Cauchy-err=0.0591324
+N_trunc=3, prob=0.101345, Cauchy-err=9.71445e-17
+
+Studying convergence for obs 7
+N_trunc=0, prob=0.00140407, Cauchy-err=0.00140407
+N_trunc=1, prob=0.00696822, Cauchy-err=0.00556415
+N_trunc=2, prob=0.00878337, Cauchy-err=0.00181514
+N_trunc=3, prob=0.00878337, Cauchy-err=-1.73472e-18
+
+Studying convergence for obs 8
+N_trunc=0, prob=0.00488906, Cauchy-err=0.00488906
+N_trunc=1, prob=0.0330536, Cauchy-err=0.0281645
+N_trunc=2, prob=0.0435639, Cauchy-err=0.0105103
+N_trunc=3, prob=0.0435639, Cauchy-err=-1.38778e-17
+
+Studying convergence for obs 9
+N_trunc=0, prob=0.0779842, Cauchy-err=0.0779842
+N_trunc=1, prob=0.118474, Cauchy-err=0.0404896
+N_trunc=2, prob=0.126936, Cauchy-err=0.00846246
+N_trunc=3, prob=0.126936, Cauchy-err=1.94289e-16
+
+Studying convergence for obs 10
+N_trunc=0, prob=0.174544, Cauchy-err=0.174544
+N_trunc=1, prob=0.174544, Cauchy-err=-2.77556e-16
+N_trunc=2, prob=0.174544, Cauchy-err=1.05471e-15
+N_trunc=3, prob=0.174544, Cauchy-err=-5.82867e-16
+N_trunc=4, prob=0.174544, Cauchy-err=-1.38778e-16
+N_trunc=5, prob=0.174544, Cauchy-err=-2.22045e-16
+N_trunc=6, prob=0.174544, Cauchy-err=6.66134e-16
+N_trunc=7, prob=0.174544, Cauchy-err=-5.35683e-15
+N_trunc=8, prob=0.174544, Cauchy-err=-2.35922e-15
+N_trunc=9, prob=0.174544, Cauchy-err=-5.55112e-17
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 1648412 88.1    2605528 139.2  2605528 139.2
+Vcells 2832725 21.7   12255594  93.6 12140729  92.7
+set_AST: obs=1, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, O_trunc_pre=1, O_eps_pre=2.0, eps_speed=20.0, O_trunc=1, O_eps=2.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, O_trunc_pre=2, O_eps_pre=2.0, eps_speed=20.0, O_trunc=2, O_eps=2.0, p_geom=0.9. done!
+
+set_AST: obs=7, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=8, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=9, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=21.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+(Spent 0.1 minutes on this task)
+
+Info about tuned stop-times:
+O_trunc:
+ [1] 0 2 1 1 1 2 2 2 2 0
+O_eps:
+ [1]  1  1  1  2  1  2  1  1 21  1
+prob:
+ [1] 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9
+eps_speed:
+ [1] 20 20 20 20 20 20 20 20 20 20
+
+Growing spaces first for smoother sampling and more faithful timings
+(Spent 0.0 minutes on this task)
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 1666658 89.1    2605528 139.2  2605528 139.2
+Vcells 2884124 22.1   12255594  93.6 12140729  92.7
+
+Short run of 2500 samples per chain to get better estimates of mode and variance under posterior
+(Spent 4.5 minutes on this task)
+Estimate of mode with target=-30.134611 found at:
+Infection  Recovery   Arrival 
+0.3569308 0.2761067 0.3823596 
+
+Analyzing truncation and approx. solver asymptotics at new theta_0
+
+Studying convergence for obs 1
+N_trunc=0, prob=0.084565, Cauchy-err=0.084565
+N_trunc=1, prob=0.084565, Cauchy-err=4.16334e-17
+N_trunc=2, prob=0.084565, Cauchy-err=-2.77556e-17
+N_trunc=3, prob=0.084565, Cauchy-err=-1.38778e-17
+N_trunc=4, prob=0.084565, Cauchy-err=0
+N_trunc=5, prob=0.084565, Cauchy-err=-2.77556e-17
+N_trunc=6, prob=0.084565, Cauchy-err=5.55112e-17
+N_trunc=7, prob=0.084565, Cauchy-err=-4.16334e-17
+N_trunc=8, prob=0.084565, Cauchy-err=4.16334e-17
+N_trunc=9, prob=0.084565, Cauchy-err=-5.55112e-17
+
+Studying convergence for obs 2
+N_trunc=0, prob=0.0410577, Cauchy-err=0.0410577
+N_trunc=1, prob=0.0410577, Cauchy-err=-2.08167e-17
+N_trunc=2, prob=0.119808, Cauchy-err=0.0787506
+N_trunc=3, prob=0.119808, Cauchy-err=0
+
+Studying convergence for obs 3
+N_trunc=0, prob=0.00487031, Cauchy-err=0.00487031
+N_trunc=1, prob=0.0285147, Cauchy-err=0.0236444
+N_trunc=2, prob=0.0316592, Cauchy-err=0.00314449
+N_trunc=3, prob=0.0316592, Cauchy-err=6.93889e-18
+
+Studying convergence for obs 4
+N_trunc=0, prob=0.00137837, Cauchy-err=0.00137837
+N_trunc=1, prob=0.0115702, Cauchy-err=0.0101919
+N_trunc=2, prob=0.0115702, Cauchy-err=-5.20417e-18
+
+Studying convergence for obs 5
+N_trunc=0, prob=0.00956169, Cauchy-err=0.00956169
+N_trunc=1, prob=0.0153461, Cauchy-err=0.00578444
+N_trunc=2, prob=0.0153461, Cauchy-err=-6.93889e-18
+
+Studying convergence for obs 6
+N_trunc=0, prob=0.0117243, Cauchy-err=0.0117243
+N_trunc=1, prob=0.0117243, Cauchy-err=-7.80626e-17
+N_trunc=2, prob=0.0270964, Cauchy-err=0.0153721
+N_trunc=3, prob=0.0270964, Cauchy-err=-6.45317e-16
+
+Studying convergence for obs 7
+N_trunc=0, prob=0.00274422, Cauchy-err=0.00274422
+N_trunc=1, prob=0.0175782, Cauchy-err=0.014834
+N_trunc=2, prob=0.024718, Cauchy-err=0.00713977
+N_trunc=3, prob=0.024718, Cauchy-err=2.08167e-17
+
+Studying convergence for obs 8
+N_trunc=0, prob=0.00594799, Cauchy-err=0.00594799
+N_trunc=1, prob=0.053288, Cauchy-err=0.04734
+N_trunc=2, prob=0.0663014, Cauchy-err=0.0130134
+N_trunc=3, prob=0.0663014, Cauchy-err=-1.38778e-17
+
+Studying convergence for obs 9
+N_trunc=0, prob=0.0378149, Cauchy-err=0.0378149
+N_trunc=1, prob=0.0654384, Cauchy-err=0.0276235
+N_trunc=2, prob=0.0744824, Cauchy-err=0.00904404
+N_trunc=3, prob=0.0744824, Cauchy-err=4.16334e-17
+
+Studying convergence for obs 10
+N_trunc=0, prob=0.171948, Cauchy-err=0.171948
+N_trunc=1, prob=0.171948, Cauchy-err=4.16334e-16
+N_trunc=2, prob=0.171948, Cauchy-err=-4.996e-16
+N_trunc=3, prob=0.171948, Cauchy-err=-4.44089e-16
+N_trunc=4, prob=0.171948, Cauchy-err=-2.47025e-15
+N_trunc=5, prob=0.171948, Cauchy-err=-5.55112e-16
+N_trunc=6, prob=0.171948, Cauchy-err=-3.05311e-16
+N_trunc=7, prob=0.171948, Cauchy-err=1.66533e-16
+N_trunc=8, prob=0.171948, Cauchy-err=-4.71845e-16
+N_trunc=9, prob=0.171948, Cauchy-err=-2.498e-16
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 1672674 89.4    2605528 139.2  2605528 139.2
+Vcells 2956186 22.6   12255594  93.6 12140729  92.7
+(Spent 0.0 minutes on this task)
+
+We'll be searching these parameters
+List of 3
+ $ sd_thresh_vec  : num [1:5] 0.1 0.5 1 1.5 2
+ $ varmat_mult_vec: num [1:8] 0.5 0.857 1.214 1.571 1.929 ...
+ $ min_mass_vec   : num [1:8] 0 0.01 0.1 0.2 0.4 0.6 0.8 0.9
+
+Estimating sd(loglik) for every configuration.
+set_AST: obs=1set_AST: obs=1, O_trunc_pre=0, O_eps_pre=1.0set_AST: obs=1, eps_speed=20.0, O_trunc_pre=0, O_eps_pre=1.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2set_AST: obs=1, eps_speed=20.0, O_trunc_pre=0, O_eps_pre=1.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc_pre=0, O_eps_pre=1.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2, O_trunc_pre=1, O_eps_pre=1.0, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, O_trunc_pre=1, O_eps_pre=1.0, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, eps_speed=20.0, O_trunc_pre=0, O_eps_pre=1.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, O_trunc_pre=1, O_eps_pre=1.0, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, eps_speed=20.0, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc_pre=0, O_eps_pre=1.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=5, eps_speed=20.0, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, O_trunc=1, O_eps=21.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc_pre=0, O_eps_pre=1.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+, O_trunc_pre=1, O_eps_pre=1.0set_AST: obs=6, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+, O_trunc_pre=1, O_eps_pre=1.0set_AST: obs=7, O_trunc_pre=1, O_eps_pre=1.0, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=7, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=7, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=7, O_trunc_pre=1, O_eps_pre=1.0, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=8, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=8set_AST: obs=8, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, O_trunc_pre=1, O_eps_pre=1.0, p_geom=0.9. done!
+
+set_AST: obs=8, eps_speed=20.0, O_trunc_pre=1, O_eps_pre=1.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=9, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=9, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=9, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=9, O_trunc_pre=0, O_eps_pre=1.0, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=1, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=21.0, p_geom=0.9. done!
+
+set_AST: obs=7, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=8set_AST: obs=1, O_trunc_pre=1, O_eps_pre=1.0, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2set_AST: obs=9, O_trunc_pre=0, O_eps_pre=1.0, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, eps_speed=20.0, O_trunc_pre=1, O_eps_pre=1.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=7, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=8, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=9, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=1, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, O_trunc_pre=1, O_eps_pre=2.0, eps_speed=20.0, O_trunc=1, O_eps=2.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, O_trunc_pre=2, O_eps_pre=2.0, eps_speed=20.0, O_trunc=2, O_eps=2.0, p_geom=0.9. done!
+
+set_AST: obs=7, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=8, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=21.0, p_geom=0.9. done!
+
+set_AST: obs=9, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=1, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=21.0, p_geom=0.9. done!
+
+set_AST: obs=4, O_trunc_pre=1, O_eps_pre=2.0, eps_speed=20.0, O_trunc=1, O_eps=2.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, O_trunc_pre=2, O_eps_pre=2.0, eps_speed=20.0, O_trunc=2, O_eps=2.0, p_geom=0.9. done!
+
+set_AST: obs=7, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=8, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=9, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+(Spent 0.7 minutes on this task)
+
+Estimated sd(loglik) for each config:
+  min_mass  sd_loglik time_per_loglik
+1     0.00 1.77076902      0.07111698
+2     0.01 1.66365292      0.07068182
+3     0.10 0.86012133      0.07733122
+4     0.20 0.69573053      0.08324078
+5     0.40 0.32381020      0.09527280
+6     0.60 0.31944140      0.09987974
+7     0.80 0.07819265      0.11415234
+8     0.90 0.05710601      0.12424693
+
+Best configuration for every threshold on sd(loglik)
+   sd_thresh min_mass  sd_loglik time_per_loglik
+7        0.1     0.80 0.07819265      0.11415234
+5        0.5     0.40 0.32381020      0.09527280
+3        1.0     0.10 0.86012133      0.07733122
+31       1.5     0.10 0.86012133      0.07733122
+2        2.0     0.01 1.66365292      0.07068182
+After removing thresholds with duplicated configurations, we get
+  sd_thresh min_mass  sd_loglik time_per_loglik
+7       0.1     0.80 0.07819265      0.11415234
+5       0.5     0.40 0.32381020      0.09527280
+3       1.0     0.10 0.86012133      0.07733122
+2       2.0     0.01 1.66365292      0.07068182
+
+Tuning stop times to the best config found for sd(loglik)<=1.0e-01.
+set_AST: obs=1, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, O_trunc_pre=1, O_eps_pre=2.0, eps_speed=20.0, O_trunc=1, O_eps=2.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, O_trunc_pre=2, O_eps_pre=2.0, eps_speed=20.0, O_trunc=2, O_eps=2.0, p_geom=0.9. done!
+
+set_AST: obs=7, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=8, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=21.0, p_geom=0.9. done!
+
+set_AST: obs=9, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+
+Info about tuned stop-times:
+O_trunc:
+ [1] 0 2 1 1 1 2 2 2 1 0
+O_eps:
+ [1]  1  1  1  2  1  2  1 21  1  1
+prob:
+ [1] 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9
+eps_speed:
+ [1] 20 20 20 20 20 20 20 20 20 20
+
+Running all chains using this configuration to estimate ess/min.
+Total sampling time: 18.3 minutes
+
+Average ESS/min: 38.99
+
+Tuning stop times to the best config found for sd(loglik)<=5.0e-01.
+set_AST: obs=1, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2, O_trunc_pre=2, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=2, O_eps=21.0, p_geom=0.9. done!
+
+set_AST: obs=7, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=8, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=9, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+
+Info about tuned stop-times:
+O_trunc:
+ [1] 0 2 1 1 0 2 1 1 0 0
+O_eps:
+ [1]  1  1  1  1  1 21  1  1  1  1
+prob:
+ [1] 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9
+eps_speed:
+ [1] 20 20 20 20 20 20 20 20 20 20
+
+Running all chains using this configuration to estimate ess/min.
+Total sampling time: 15.4 minutes
+
+Average ESS/min: 41.63
+
+Tuning stop times to the best config found for sd(loglik)<=1.0e+00.
+set_AST: obs=1, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=21.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=7, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=8, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=9, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+
+Info about tuned stop-times:
+O_trunc:
+ [1] 0 1 0 1 0 1 0 1 0 0
+O_eps:
+ [1]  1  1  1 21  1  1  1  1  1  1
+prob:
+ [1] 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9
+eps_speed:
+ [1] 20 20 20 20 20 20 20 20 20 20
+
+Running all chains using this configuration to estimate ess/min.
+Total sampling time: 12.4 minutes
+
+Average ESS/min: 44.68
+
+Tuning stop times to the best config found for sd(loglik)<=2.0e+00.
+set_AST: obs=1, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=7, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=8, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=9, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+
+Info about tuned stop-times:
+O_trunc:
+ [1] 0 1 0 0 0 1 0 0 0 0
+O_eps:
+ [1] 1 1 1 1 1 1 1 1 1 1
+prob:
+ [1] 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9
+eps_speed:
+ [1] 20 20 20 20 20 20 20 20 20 20
+
+Running all chains using this configuration to estimate ess/min.
+Total sampling time: 11.2 minutes
+
+Average ESS/min: 38.44
+
+Finished! Summary of ESS/min:
+  sd_thresh min_mass  sd_loglik time_per_loglik varmat_mult total_sampling_time
+1       0.1     0.80 0.07819265      0.11415234           1            18.29253
+2       0.5     0.40 0.32381020      0.09527280           1            15.37568
+3       1.0     0.10 0.86012133      0.07733122           1            12.40905
+4       2.0     0.01 1.66365292      0.07068182           1            11.17650
+  ess_mean ess_per_min
+1 713.2800    38.99297
+2 640.0163    41.62524
+3 554.4802    44.68352
+4 429.6459    38.44190
+
+Setting sampler to the best configuration found
+  sd_thresh min_mass sd_loglik time_per_loglik varmat_mult total_sampling_time
+3         1      0.1 0.8601213      0.07733122           1            12.40905
+  ess_mean ess_per_min
+3 554.4802    44.68352
+set_AST: obs=1, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=2, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=3, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=4, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=21.0, p_geom=0.9. done!
+
+set_AST: obs=5, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=6, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=7, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=8, O_trunc_pre=1, O_eps_pre=1.0, eps_speed=20.0, O_trunc=1, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=9, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+set_AST: obs=10, O_trunc_pre=0, O_eps_pre=1.0, eps_speed=20.0, O_trunc=0, O_eps=1.0, p_geom=0.9. done!
+
+
+Short run of 2500 samples per chain to get better estimates of mode and variance under posterior
+(Spent 3.1 minutes on this task)
+Estimate of mode with target=-28.365301 found at:
+Infection  Recovery   Arrival 
+0.3921788 0.2683904 0.4372931 
+Selected the following configuration:
+  varmat_mult acc_ratio    target mean_ess ess_per_min
+4    1.571429    0.2773 -28.34131 630.4823    54.05804
+(Spent 23.2 minutes on this task)
+
+
+Tuning variance multiplier finished. Summary:
+  sd_thresh min_mass sd_loglik time_per_loglik varmat_mult acc_ratio    target
+3         1      0.1 0.8601213      0.07733122    1.571429    0.2773 -28.34131
+  mean_ess ess_per_min
+3 630.4823    54.05804
+
+Storing results.

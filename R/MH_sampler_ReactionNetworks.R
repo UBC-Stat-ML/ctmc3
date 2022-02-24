@@ -56,9 +56,9 @@ MHSamplerReactNet = R6::R6Class(
       self$debug        = debug
       
       # select matrix exponentiation algorithm
-      self$correct_unif   = FALSE
-      if(gtp_solver == "correct_unif"){
-        self$correct_unif = TRUE
+      self$correct_unif   = TRUE
+      if(gtp_solver == "wrong_unif"){
+        self$correct_unif = FALSE
         gtp_solver        = "unif"
       }
       self$gtp_solver     = gtp_solver
