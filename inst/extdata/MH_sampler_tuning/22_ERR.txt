@@ -1,4 +1,0 @@
-Warning message:
-In sampler$match_sd_thresh_config(sd_stats, sd_thresh_vec) :
-  No configuration achieves sd(loglik)<=1.0e-01. Using the closest match.
-
