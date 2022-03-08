@@ -50,14 +50,14 @@ plot(coda_ob)
 
 1. `exp_name`:
     - Sampler in theta space:
-        a. `"SG2019_Sch"`
-        b. `"SG2019_LV20"`
-        c. `"GHS2017_LV"`
-        d. `"GHS2017_SIR"`
+        - `"SG2019_Sch"`
+        - `"SG2019_LV20"`
+        - `"GHS2017_LV"`
+        - `"GHS2017_SIR"`
     - Sampler in log(theta) space:
-        a. `"SG2019_Sch_log"`
-        b. `"SG2019_LV20_log"`
-        c. `"GHS2017_LV_log"`
+        - `"SG2019_Sch_log"`
+        - `"SG2019_LV20_log"`
+        - `"GHS2017_LV_log"`
 2. `reg_ts`:
     - `TRUE` : uses RA
     - `FALSE`: uses IA
