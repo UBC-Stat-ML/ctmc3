@@ -50,7 +50,7 @@ coda_ob = coda::mcmc(exp(res$theta))
 plot(coda_ob)
 ```
 
-### Available options
+### Available options for `get_sampler`
 
 1. `exp_name`:
     - Sampler in theta space:
@@ -71,8 +71,14 @@ plot(coda_ob)
 
 ### Tuning
 
-One may also re-tune the sampler using (takes a while)
+One may also tune the sampler from scratch (takes a while)
 ```r
+sampler = ctmc3::get_sampler(
+  exp_name   = "SG2019_Sch_log", # experiment: Schloegl data with sampler in log-space
+  reg_ts     = TRUE,             # exploit regularity of time series by using RA method
+  gtp_solver = "skeletoid",      # matrix exponential approximation
+  tuned_pars = FALSE             # do not used pre-tuned parameters
+)
 ctmc3::tune_sampler(sampler,n_cores = 4L)
 ```
 It will write the results to the current working directory.
