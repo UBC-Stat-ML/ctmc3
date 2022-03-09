@@ -23,15 +23,16 @@ remotes::install_github("UBC-Stat-ML/ctmc3@main")
 
 ## Usage example
 
+Build a pre-tuned sampler object for a particular experiment
 ```r
-# build a pre-tuned sampler object for a particular experiment
 sampler = ctmc3::get_sampler(
   exp_name   = "SG2019_Sch_log", # experiment: Schloegl data with sampler in log-space
   reg_ts     = TRUE,             # exploit regularity of time series by using RA method
   gtp_solver = "skeletoid"       # matrix exponential approximation
 )
-
-# run sampler
+```
+Run the sampler and measure ESS per billion matrix operations
+```r
 pske::reset_ops_counter() # set ops counter to 0
 res=sampler$run_chain(S = 10000L, print_every = 100L) # run for 10000 iter, print every 100
 
@@ -40,13 +41,16 @@ res=sampler$run_chain(S = 10000L, print_every = 100L) # run for 10000 iter, prin
 ess_mean = mean(mcmcse::ess(exp(res$theta))) # compute average ESSs (need to invert log transform)
 n_ops    = pske::get_ops_counter()
 cat(sprintf("\nEfficiency: %.3f ESS/GMOs\n", ess_mean/(1E-9*n_ops)))
+```
+Compare this number to the results in the Experiments section of the paper. 
 
-# traceplots and densities using coda utility
+Graph traceplots and densities using the coda utility
+```r
 coda_ob = coda::mcmc(exp(res$theta))
 plot(coda_ob)
 ```
 
-## Available options
+### Available options
 
 1. `exp_name`:
     - Sampler in theta space:
@@ -64,4 +68,16 @@ plot(coda_ob)
 3. `gtp_solver` (matrix exponential algorithm):
     - `"skeletoid"`
     - `"unif"`
+
+### Tuning
+
+One may also re-tune the sampler using (takes a while)
+```r
+ctmc3::tune_sampler(sampler,n_cores = 4L)
+```
+It will write the results to the current working directory.
+
+
+
+
 
