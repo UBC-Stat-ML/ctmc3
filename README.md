@@ -1,8 +1,13 @@
 # ctmc3: CTMC MCMC Pseudo-Marginal Inference
 
+An R package for performing inference on discretely observed continuous-time Markov chains using a pseudo-marginal Markov chain Monte Carlo approach.
+
+
 ## Installation
 
 ### Step 1: system dependencies
+
+#### FFTW (only needed if building dependencies from source)
 
 The package [`mcmcse`](https://cran.r-project.org/package=mcmcse) -- used to compute ESSs -- indirectly depends on the [FFTW library](http://www.fftw.org/). Follow these steps to install FFTW in
 
@@ -69,7 +74,7 @@ plot(coda_ob)
     - `"skeletoid"`
     - `"unif"`
 
-### Tuning
+### Tuning (currently unsupported on Windows)
 
 One may also tune the sampler from scratch (takes a while)
 ```r
