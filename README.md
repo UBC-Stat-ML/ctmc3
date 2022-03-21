@@ -21,7 +21,6 @@ The package [`mcmcse`](https://cran.r-project.org/package=mcmcse) -- used to com
 if (!require(remotes) || packageVersion("remotes") < package_version("2.4.2")) {
     install.packages("remotes")
 }
-Sys.setenv(GITHUB_PAT = "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")
 remotes::install_github("UBC-Stat-ML/ctmc3@main")
 ```
 
