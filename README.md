@@ -7,9 +7,12 @@ An R package for performing inference on discretely observed continuous-time Mar
 
 ### Step 1: system dependencies
 
-#### C++11 compatible compiler
+#### A working C++11 compatible toolchain
 
-Building the underlying C/C++ code requires a C++11 compatible compiler, e.g., gcc >= 4.7 or Clang >= 3.0. Linux and macOS systems usually ship with such a compiler. Windows users need to install the [Rtools toolchain](https://cran.r-project.org/bin/windows/Rtools/).
+Building the underlying C/C++ code requires a working C++11 toolchain. Linux systems usually ship with such tools, but macOS and Windows users might require additional setup:
+
+- Windows: install the [Rtools toolchain](https://cran.r-project.org/bin/windows/Rtools/).
+- macOS: Follow [these instructions](https://github.com/rmacoslib/r-macos-rtools#how-do-i-use-the-installer) to configure the C++ toolchain.
 
 
 #### FFTW (only needed if building dependencies from source)
