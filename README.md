@@ -7,6 +7,11 @@ An R package for performing inference on discretely observed continuous-time Mar
 
 ### Step 1: system dependencies
 
+#### C++11 compatible compiler
+
+Building the underlying C/C++ code requires a C++11 compatible compiler, e.g., gcc >= 4.7 or Clang >= 3.0. Linux and macOS systems usually ship with such a compiler. Windows users need to install the [Rtools toolchain](https://cran.r-project.org/bin/windows/Rtools/).
+
+
 #### FFTW (only needed if building dependencies from source)
 
 The package [`mcmcse`](https://cran.r-project.org/package=mcmcse) -- used to compute ESSs -- indirectly depends on the [FFTW library](http://www.fftw.org/). Follow these steps to install FFTW in
@@ -14,6 +19,7 @@ The package [`mcmcse`](https://cran.r-project.org/package=mcmcse) -- used to com
 - Ubuntu: `apt-get install libfftw3-dev`
 - macOS: `brew install fftw`
 - Windows: instructions [here](http://www.fftw.org/install/windows.html)
+
 
 ### Step 2: install `ctmc3`
 
