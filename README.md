@@ -11,8 +11,8 @@ An R package for performing inference on discretely observed continuous-time Mar
 
 Linux systems usually ship with such tools, but macOS and Windows users might require additional setup:
 
-- Windows: install the [Rtools toolchain](https://cran.r-project.org/bin/windows/Rtools/).
-- macOS: Follow [these instructions](https://mac.r-project.org/tools/) to configure the toolchain.
+- Windows: install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
+- macOS: follow [these instructions](https://mac.r-project.org/tools/) (only "Mandatory tools").
 
 
 #### FFTW (only needed if building dependencies from source)
